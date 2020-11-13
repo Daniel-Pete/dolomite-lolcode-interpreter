@@ -15,6 +15,47 @@ r_iha = "(I HAS A) ([a-zA-Z]+[a-zA-Z0-9\_]*)"
 r_ihai = "(I HAS A) ([a-zA-Z]+[a-zA-Z0-9\_]*) (ITZ) (-?[0-9]+|-?[0-9]*\.[0-9]+)"
 
 
+
+
+def is_var_assign(line):
+
+    try:
+        x = re.match(r_ihai, line).groups()
+        print("Variable Declaration:", x[0])
+        print("Variable Identifier:", x[1])
+        print("Variable Assignment:", x[2])
+        print("Literal:", x[3], "\n")
+
+        return True
+    except:
+        pass
+
+    return False
+
+
+def is_var_declare(line):
+    try:
+        x = re.match(r_iha, line).groups()
+        print("Variable Declaration:", x[0])
+        print("Variable Identifier:", x[1], "\n")
+
+        return True
+
+    except:
+        pass
+
+    return False
+
+def is_code_delimiter(line):
+
+    if re.match(r_hai, line) or re.match(r_ktb, line):
+        print("Code Delimiter:", line, "\n")
+        return True
+
+
+    return False
+
+
 def tokenize(fn):
 
     f = open(fn, "r")
@@ -23,38 +64,13 @@ def tokenize(fn):
 
         line = line.strip("\n")
 
-        
-
-        try:
-            x = re.match(r_ihai, line).groups()
-            print("Variable Declaration:" ,x[0])
-            print("Variable Identifier:"  ,x[1])
-            print("Variable Assignment:"  ,x[2])
-            print("Literal:"  ,x[3])
+        if is_var_assign(line): continue
+        if is_var_declare(line): continue
+        if is_code_delimiter(line): continue
             
-            print()
-            continue
-            
-        except:
-            pass
-
-        try:
-            x = re.match(r_iha, line).groups()
-            print("Variable Declaration:", x[0])
-            print("Variable Identifier:", x[1])
-            print()
-            continue
-        except:
-            pass
-
-        if re.match(r_hai, line) or re.match(r_ktb, line):
-            print("Code Delimiter:",line)
-            print()
         
 
-        
-
-
+    
 
 def main():
 
