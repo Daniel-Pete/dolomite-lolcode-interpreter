@@ -4,7 +4,7 @@
 
 from checker import *
 
-file = "data/sample.txt"
+file = "../data/sample.txt"
 
 def tokenize(fn):
 
