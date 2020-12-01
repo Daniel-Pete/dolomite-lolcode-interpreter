@@ -5,6 +5,7 @@
 import re
 from regex import *
 
+dataset = []
 
 def is_var_assign(line):
 
@@ -18,9 +19,9 @@ def is_var_assign(line):
         # through the use of groups
 
         x = re.match(R_IHAI, line).groups()
-        print("Variable Declaration:", x[1])
-        print("Variable Identifier:", x[2])
-        print("Variable Assignment:", x[3])
+        dataset.append(["Variable Declaration", str(x[1])])
+        dataset.append(["Variable Identifier", str(x[2])])
+        dataset.append(["Variable Assignment", str(x[3])])
 
         # If the variable matches a string
         # the string is stripped of its
@@ -28,13 +29,13 @@ def is_var_assign(line):
 
         if re.match(R_STR, x[4]):
             new = x[4].strip('"')
-            print("String Literal:", new)
+            dataset.append(["String Literal", new])
 
         elif re.match(R_NUMBAR, x[4]):
-            print("Numbar Literal:", x[4])
+            dataset.append(["Numbar Literal", x[4]])
 
         elif re.match(R_NUMBR, x[4]):
-            print("Numbr Literal:", x[4])
+            dataset.append(["Numbr Literal", x[4]])
 
         return True
 
@@ -56,8 +57,8 @@ def is_var_declare(line):
 
     try:
         x = re.match(R_IHA, line).groups()
-        print("Variable Declaration:", x[1])
-        print("Variable Identifier:", x[2])
+        dataset.append(["Variable Declaration", x[1]])
+        dataset.append(["Variable Identifier", x[2]])
 
         return True
 
@@ -74,7 +75,7 @@ def is_code_delimiter(line):
     # or KTHXBYE
 
     if re.match(R_HAI, line) or re.match(R_KTB, line):
-        print("Code Delimiter:", line)
+        dataset.append(["Code Delimiter", line])
         return True
 
     return False
@@ -88,8 +89,8 @@ def is_print(line):
     try:
 
         x = re.match(R_VISI, line).groups()
-        print("Print Identifier:", x[0])
-        print("Variable Identifier:", x[1])
+        dataset.append(["Print Identifier", x[0]])
+        dataset.append(["Variable Identifier", x[1]])
 
         return True
     except:
@@ -105,8 +106,8 @@ def is_input(line):
 
     try:
         x = re.match(R_GIME, line).groups()
-        print("Input Identifier:", x[0])
-        print("Variable Identifier:", x[1])
+        dataset.append(["Input Identifier", x[0]])
+        dataset.append(["Variable Identifier", x[1]])
 
         return True
     except:
@@ -122,8 +123,8 @@ def is_comment(line):
 
     try:
         x = re.match(R_BTW, line).groups()
-        print("Comment Identifier:", x[1])
-        print("Comment:", x[2])
+        dataset.append(["Comment Identifier", x[1]])
+        dataset.append(["Comment", x[2]])
 
         return True
     except:
@@ -136,7 +137,7 @@ def is_if_then(line):
 
     try:
         x = re.match(R_ORLY, line).groups()
-        print("Control Flow Keyword:", x[1])
+        dataset.append(["Control Flow Keyword", x[1]])
         return True
     except:
         pass
@@ -148,7 +149,7 @@ def is_end_if(line):
 
     try:
         x = re.match(R_OIC, line).groups()
-        print("Control Flow Keyword:", x[1])
+        dataset.append(["Control Flow Keyword", x[1]])
         return True
     except:
         pass
@@ -160,7 +161,7 @@ def is_if(line):
 
     try:
         x = re.match(R_YARLY, line).groups()
-        print("Control Flow Keyword:", x[1])
+        dataset.append(["Control Flow Keyword", x[1]])
         return True
     except:
         pass
@@ -172,7 +173,7 @@ def is_else(line):
 
     try:
         x = re.match(R_NOWAI, line).groups()
-        print("Control Flow Keyword:", x[1])
+        dataset.append(["Control Flow Keyword", x[1]])
         return True
     except:
         pass
@@ -184,7 +185,7 @@ def is_switch(line):
 
     try:
         x = re.match(R_NOWAI, line).groups()
-        print("Control Flow Keyword:", x[1])
+        dataset.append(["Control Flow Keyword", x[1]])
         return True
     except:
         pass
@@ -196,7 +197,7 @@ def is_switch(line):
 
     try:
         x = re.match(R_WTF, line).groups()
-        print("Control Flow Keyword:", x[1])
+        dataset.append(["Control Flow Keyword", x[1]])
         return True
     except:
         pass
@@ -208,8 +209,8 @@ def is_case(line):
 
     try:
         x = re.match(R_OMG, line).groups()
-        print("Control Flow Keyword:", x[1])
-        print("Value Literal: ", x[2])
+        dataset.append(["Control Flow Keyword", x[1]])
+        dataset.append(["Value Literal", x[2]])
 
         return True
     except:
@@ -221,7 +222,7 @@ def is_end_case(line):
 
     try:
         x = re.match(R_OMGWTF, line).groups()
-        print("Control Flow Keyword:", x[1])
+        dataset.append(["Control Flow Keyword", x[1]])
 
         return True
     except:

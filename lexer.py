@@ -20,8 +20,6 @@ def tokenize(fn):
 
         line = line.strip("\n")
 
-        print()
-
         if is_var_assign(line): continue
         if is_var_declare(line): continue
         if is_code_delimiter(line): continue
@@ -41,8 +39,15 @@ def tokenize(fn):
             break
  
 
+def display(ds):
+    print("Data Set")
+    for i in ds:
+        print(i)
+
 def main():
     tokenize(file)
+    display(dataset)
+
 
 main()
 
