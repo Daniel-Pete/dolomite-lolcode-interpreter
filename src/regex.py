@@ -40,3 +40,25 @@ R_OMGWTF = "(\s*)(OMGWTF)"
 # Boolean Operation 
 R_ANYOF = "(\s*)(ANY OF) (WIN|FAIL) ([A-Z\s]*)"
 R_INFINITE_TROOF = "AN WIN|AN FAIL*"
+
+
+# Classification
+
+VAR_DEC = "Variable Declaration"
+VAR_IDENT = "Variable Identifier"
+VAR_ASS = "Variable Assignment"
+STR_LIT = "String Literal"
+NBR_LIT = "Numbr Literal"
+NBAR_LIT = "Numbar Literal"
+VAL_LIT = "Value Literal"
+TROOF_LIT = "Troof Literal"
+COD_DEL = "Code Delimiter"
+PRINT_ID = "Print Identifier"
+INPUT_ID = "Input Identifier"
+DOC_ID = "Documentation"
+COM_ID = "Comment Identifier"
+COM_DEL = "Comment Delimiter"
+COM = "Comment"
+CF_KEY = "Control-Flow Keyword"
+BOOL_OP = "Boolean Operation"
+CON_KEY = "Connector Keyword"

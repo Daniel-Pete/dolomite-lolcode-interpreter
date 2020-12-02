@@ -6,7 +6,7 @@ import re
 from regex import *
 
 dataset = []
-
+variables = {}
 
 
 def is_var_assign(line):
@@ -21,50 +21,60 @@ def is_var_assign(line):
         # through the use of groups
 
         x = re.match(R_IHAI, line).groups()
-        dataset.append(["Variable Declaration", str(x[1])])
-        dataset.append(["Variable Identifier", str(x[2])])
-        dataset.append(["Variable Assignment", str(x[3])])
+        
+        dataset.append([VAR_DEC, str(x[1])])
+        dataset.append([VAR_IDENT, str(x[2])])
+
+        if x[3]: dataset.append([VAR_ASS, str(x[3])])
 
         # If the variable matches a string
         # the string is stripped of its
         # quotation marks
 
         if re.match(R_STR, x[4]):
+            
             new = x[4].strip('"')
-            dataset.append(["String Literal", new])
+            dataset.append([STR_LIT, new])
 
         elif re.match(R_NUMBAR, x[4]):
-            dataset.append(["Numbar Literal", x[4]])
+            dataset.append([NBR_LIT, x[4]])
 
         elif re.match(R_NUMBR, x[4]):
-            dataset.append(["Numbr Literal", x[4]])
+            dataset.append([NBAR_LIT, x[4]])
+
+        variables[str(x[2])] = x[4]
+
 
         return True
 
     except:
 
         pass
-
-    # If it doesn't match
-    # the next
-
+    
     return False
 
 
 def is_var_declare(line):
+
+    print(VAR_DEC)
 
     # Checks if the
     # line is for variable
     # declaration
 
     try:
+        
         x = re.match(R_IHA, line).groups()
-        dataset.append(["Variable Declaration", x[1]])
-        dataset.append(["Variable Identifier", x[2]])
+
+        dataset.append([VAR_DEC, x[1]])
+        dataset.append([VAR_IDENT, x[2]])
+
+        variables[str(x[2])] = None 
 
         return True
 
     except:
+
         pass
 
     return False
@@ -77,7 +87,7 @@ def is_hai(line):
     # or KTHXBYE
 
     if re.match(R_HAI, line):
-        dataset.append(["Code Delimiter", line])
+        dataset.append([COD_DEL, line])
         return True
 
     return False
@@ -85,7 +95,7 @@ def is_hai(line):
 def is_bye(line):
 
     if re.match(R_KTB, line):
-        dataset.append(["Code Delimiter", line])
+        dataset.append([COD_DEL, line])
         return True
 
     return False
@@ -100,8 +110,8 @@ def is_print(line):
     try:
 
         x = re.match(R_VISI, line).groups()
-        dataset.append(["Print Identifier", x[1]])
-        dataset.append(["Variable Identifier", x[2]])
+        dataset.append([PRINT_ID, x[1]])
+        dataset.append([VAR_IDENT, x[2]])
 
         return True
     except:
@@ -117,8 +127,8 @@ def is_input(line):
 
     try:
         x = re.match(R_GIME, line).groups()
-        dataset.append(["Input Identifier", x[0]])
-        dataset.append(["Variable Identifier", x[1]])
+        dataset.append([INPUT_ID, x[0]])
+        dataset.append([VAR_IDENT, x[1]])
 
         return True
     except:
@@ -134,8 +144,8 @@ def is_comment(line):
 
     try:
         x = re.match(R_BTW, line).groups()
-        dataset.append(["Comment Identifier", x[1]])
-        dataset.append(["Comment", x[2]])
+        dataset.append([COM_ID, x[1]])
+        dataset.append([COM, x[2]])
 
         return True
     except:
@@ -148,7 +158,7 @@ def is_if_then(line):
 
     try:
         x = re.match(R_ORLY, line).groups()
-        dataset.append(["Control Flow Keyword", x[1]])
+        dataset.append([CF_KEY, x[1]])
         return True
     except:
         pass
@@ -160,7 +170,7 @@ def is_end_if(line):
 
     try:
         x = re.match(R_OIC, line).groups()
-        dataset.append(["Control Flow Keyword", x[1]])
+        dataset.append([CF_KEY, x[1]])
         return True
     except:
         pass
@@ -172,7 +182,7 @@ def is_if(line):
 
     try:
         x = re.match(R_YARLY, line).groups()
-        dataset.append(["Control Flow Keyword", x[1]])
+        dataset.append([CF_KEY, x[1]])
         return True
     except:
         pass
@@ -184,7 +194,7 @@ def is_else(line):
 
     try:
         x = re.match(R_NOWAI, line).groups()
-        dataset.append(["Control Flow Keyword", x[1]])
+        dataset.append([CF_KEY, x[1]])
         return True
     except:
         pass
@@ -196,7 +206,7 @@ def is_switch(line):
 
     try:
         x = re.match(R_WTF, line).groups()
-        dataset.append(["Control Flow Keyword", x[1]])
+        dataset.append([CF_KEY, x[1]])
         return True
     except:
         pass
@@ -208,8 +218,8 @@ def is_case(line):
 
     try:
         x = re.match(R_OMG, line).groups()
-        dataset.append(["Control Flow Keyword", x[1]])
-        dataset.append(["Value Literal", x[2]])
+        dataset.append([CF_KEY, x[1]])
+        dataset.append([VAL_LIT, x[2]])
 
         return True
     except:
@@ -221,7 +231,7 @@ def is_end_case(line):
 
     try:
         x = re.match(R_OMGWTF, line).groups()
-        dataset.append(["Control Flow Keyword", x[1]])
+        dataset.append([CF_KEY, x[1]])
 
         return True
     except:
@@ -233,10 +243,10 @@ def is_multicomment(line):
 
     try:
         x = re.match(R_OBTW, line).groups()
-        dataset.append(["Comment Delimiter", x[1]])
+        dataset.append([COM_DEL, x[1]])
 
         if x[2]:
-            dataset.append(["Documentation", x[2]])
+            dataset.append([DOC_ID, x[2]])
 
 
 
@@ -251,7 +261,7 @@ def is_end_multicomment(line):
 
     try:
         x = re.match(R_TLDR, line).groups()
-        dataset.append(["Comment Delimiter", x[1]])
+        dataset.append([COM_DEL, x[1]])
 
         return True
     except:
@@ -261,7 +271,7 @@ def is_end_multicomment(line):
 
 def is_documentation(line):
 
-    dataset.append(["Documentation", line])
+    dataset.append([DOC_ID, line])
     return True
 
 
@@ -270,21 +280,20 @@ def is_anyof(line):
     try:
 
         x = re.match(R_ANYOF, line).groups()
-        dataset.append(["Boolean Operation", x[1]])
-        dataset.append(["Variable Identifier", x[2]])
+        dataset.append([BOOL_OP, x[1]])
+        dataset.append([VAR_IDENT, x[2]])
 
         
         if re.match(R_INFINITE_TROOF, x[3]):
+
             for i in re.findall(R_INFINITE_TROOF, x[3]):
+                
                 i = i.split()
-                dataset.append(["Connector Keyword", i[0]])
-                dataset.append(["Troof Variable", i[1]])
+                dataset.append([CON_KEY, i[0]])
+                dataset.append([TROOF_LIT, i[1]])
+
         else:
             return False
-
-        
-        
-
 
 
         return True

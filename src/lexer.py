@@ -10,19 +10,21 @@ file = "../data/sample.txt"
 def tokenize(fn):
 
     f = open(fn, "r")
-    TOGGLE = "O"
+
+    TOGGLE = "START"
 
     for num, line in enumerate(f):
 
-        # Each line in the file
-        # is checked for a match
+        # Each line in the file is checked for a match
         # Once the line matches a 
         # certain construct then it 
         # skips to the next iteration
 
         line = line.strip("\n")
+
+        print(line)
         
-        if TOGGLE == "O":
+        if TOGGLE == "START":
 
             if is_hai(line):
                 TOGGLE = "STATEMENT"
@@ -34,6 +36,7 @@ def tokenize(fn):
 
         elif TOGGLE == "STATEMENT":
 
+            
             if is_var_assign(line): continue
             elif is_var_declare(line): continue
             elif is_print(line): continue
@@ -44,7 +47,10 @@ def tokenize(fn):
                 TOGGLE = "MULTICOMMENT"
                 continue
 
-            elif is_bye(line): break
+            elif is_bye(line): 
+                TOGGLE = "END"
+                break
+
             elif is_anyof(line): continue
 
             else:
@@ -63,9 +69,11 @@ def tokenize(fn):
             else:
                 print("Invalid Syntax on Line", num + 1, line)
                 break
+        
 
 
-            
+            # Kapag ung toggle ay Documentation 
+            # pa rin hanggang dulo error 
 
             # if is_if_then(line): 
             #     continue
@@ -82,14 +90,22 @@ def tokenize(fn):
         
  
 
-def display(ds):
-    print("Data Set")
-    for i in ds:
+def print_lexemes():
+    
+    print("\nLexemes")
+    for i in dataset:
         print(i)
+    print()
+
+def print_vars():
+    print("\nVariables")
+    for i in variables:
+        print(i,"=",variables[i])
+    print()
 
 def main():
     tokenize(file)
-    display(dataset)
-
+    print_lexemes()
+    print_vars()
 
 main()
