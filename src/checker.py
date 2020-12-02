@@ -5,8 +5,19 @@
 import re
 from regex import *
 
+global ERROR
+ERROR = SYNTAX_ERROR
+
+
 dataset = []
-variables = {}
+varset = {}
+
+def show_error(fn, num, line):
+
+    
+    print("File", fn, "line", num + 1)
+    print("\n\t", line, "\n")
+    print(ERROR)
 
 
 def is_var_assign(line):
@@ -42,7 +53,7 @@ def is_var_assign(line):
         elif re.match(R_NUMBR, x[4]):
             dataset.append([NBAR_LIT, x[4]])
 
-        variables[str(x[2])] = x[4]
+        varset[str(x[2])] = x[4]
 
 
         return True
@@ -56,8 +67,6 @@ def is_var_assign(line):
 
 def is_var_declare(line):
 
-    print(VAR_DEC)
-
     # Checks if the
     # line is for variable
     # declaration
@@ -69,7 +78,7 @@ def is_var_declare(line):
         dataset.append([VAR_DEC, x[1]])
         dataset.append([VAR_IDENT, x[2]])
 
-        variables[str(x[2])] = None 
+        varset[str(x[2])] = None 
 
         return True
 
@@ -106,6 +115,7 @@ def is_print(line):
 
     # Checks if the line
     # is for printing
+    global ERROR
 
     try:
 
@@ -113,7 +123,25 @@ def is_print(line):
         dataset.append([PRINT_ID, x[1]])
         dataset.append([VAR_IDENT, x[2]])
 
+        if varset.__contains__(x[2]):
+            print(varset[x[2]])
+        
+        elif (re.match(R_NUMBR, x[2]) or 
+            re.match(R_NUMBAR, x[2])):
+
+            print(x[2])
+
+        elif re.match(R_STR, x[2]):
+            string = x[2].strip('"')
+            print(string)
+
+        else:
+            ERROR = VAR_ERROR
+            return False
+
+            
         return True
+
     except:
         pass
 
@@ -125,12 +153,22 @@ def is_input(line):
     # Checks if the line
     # asks for an input
 
+    global ERROR
     try:
         x = re.match(R_GIME, line).groups()
         dataset.append([INPUT_ID, x[0]])
         dataset.append([VAR_IDENT, x[1]])
 
+        
+        if varset.__contains__(x[2]):
+            varset[x[2]] = input()
+
+        else:
+            ERROR = VAR_ERROR
+            return False
+
         return True
+
     except:
         pass
 

@@ -9,7 +9,12 @@ file = "../data/sample.txt"
 
 def tokenize(fn):
 
-    f = open(fn, "r")
+
+    try:
+        f = open(fn, "r")
+    except:
+        print("File Error: file named", fn,"cannot be found")
+        return
 
     TOGGLE = "START"
 
@@ -21,17 +26,17 @@ def tokenize(fn):
         # skips to the next iteration
 
         line = line.strip("\n")
-
-        print(line)
         
         if TOGGLE == "START":
 
             if is_hai(line):
                 TOGGLE = "STATEMENT"
                 continue
+            elif is_comment(line):
+                continue
 
             else:
-                print("Invalid Syntax on Line", num + 1, line)
+                show_error(fn, num, line)
                 break
 
         elif TOGGLE == "STATEMENT":
@@ -49,12 +54,12 @@ def tokenize(fn):
 
             elif is_bye(line): 
                 TOGGLE = "END"
-                break
+                continue
 
             elif is_anyof(line): continue
 
             else:
-                print("Invalid Syntax on Line", num + 1, line)
+                show_error(fn, num, line)
                 break
         
         elif TOGGLE == "MULTICOMMENT":
@@ -67,13 +72,22 @@ def tokenize(fn):
                 continue
 
             else:
-                print("Invalid Syntax on Line", num + 1, line)
+                show_error(fn, num, line)
                 break
         
+        elif TOGGLE == "END":
+
+            if line:
+                show_error(fn, num, line)
+                break
+
+        elif TOGGLE == "MULTICOMMENT" and is_bye(line):
+
+            show_error(fn, num, line)
+            break
 
 
-            # Kapag ung toggle ay Documentation 
-            # pa rin hanggang dulo error 
+
 
             # if is_if_then(line): 
             #     continue
@@ -99,13 +113,14 @@ def print_lexemes():
 
 def print_vars():
     print("\nVariables")
-    for i in variables:
-        print(i,"=",variables[i])
+    for i in varset:
+        print(i,"=",varset[i])
     print()
 
 def main():
     tokenize(file)
-    print_lexemes()
+
+    # print_lexemes()
     print_vars()
 
 main()

@@ -18,7 +18,7 @@ R_IHA = "(\s*)(I HAS A) ([a-zA-Z]+[a-zA-Z0-9\_]*)"
 R_IHAI = "(\s*)(I HAS A) ([a-zA-Z]+[a-zA-Z0-9\_]*) (ITZ) (-?[0-9]*\.[0-9]+|-?[0-9]+|\"[^\"]*\")"
 
 # Input / Output
-R_VISI = "(\s*)(VISIBLE) (-?[0-9]*\.[0-9]+|-?[0-9]+|[a-zA-Z]+[a-zA-Z0-9\_]*)"
+R_VISI = "(\s*)(VISIBLE) (-?[0-9]*\.[0-9]+|-?[0-9]+|[a-zA-Z]+[a-zA-Z0-9\_]*|\"[^\"]*\")"
 R_GIME = "(\s*)(GIMMEH) ([a-zA-Z]+[a-zA-Z0-9\_]*)"
 
 # Documentation
@@ -62,3 +62,9 @@ COM = "Comment"
 CF_KEY = "Control-Flow Keyword"
 BOOL_OP = "Boolean Operation"
 CON_KEY = "Connector Keyword"
+
+
+# Error Messages
+
+SYNTAX_ERROR = "Syntax Error."
+VAR_ERROR = "Undefined Error."
