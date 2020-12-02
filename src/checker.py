@@ -7,6 +7,8 @@ from regex import *
 
 dataset = []
 
+
+
 def is_var_assign(line):
 
     # Checks if the
@@ -68,17 +70,26 @@ def is_var_declare(line):
     return False
 
 
-def is_code_delimiter(line):
+def is_hai(line):
 
     # Checks if the
     # line is either HAI
     # or KTHXBYE
 
-    if re.match(R_HAI, line) or re.match(R_KTB, line):
+    if re.match(R_HAI, line):
         dataset.append(["Code Delimiter", line])
         return True
 
     return False
+
+def is_bye(line):
+
+    if re.match(R_KTB, line):
+        dataset.append(["Code Delimiter", line])
+        return True
+
+    return False
+
 
 
 def is_print(line):
@@ -89,8 +100,8 @@ def is_print(line):
     try:
 
         x = re.match(R_VISI, line).groups()
-        dataset.append(["Print Identifier", x[0]])
-        dataset.append(["Variable Identifier", x[1]])
+        dataset.append(["Print Identifier", x[1]])
+        dataset.append(["Variable Identifier", x[2]])
 
         return True
     except:
@@ -184,18 +195,6 @@ def is_else(line):
 def is_switch(line):
 
     try:
-        x = re.match(R_NOWAI, line).groups()
-        dataset.append(["Control Flow Keyword", x[1]])
-        return True
-    except:
-        pass
-
-    return False
-
-
-def is_switch(line):
-
-    try:
         x = re.match(R_WTF, line).groups()
         dataset.append(["Control Flow Keyword", x[1]])
         return True
@@ -225,6 +224,71 @@ def is_end_case(line):
         dataset.append(["Control Flow Keyword", x[1]])
 
         return True
+    except:
+        pass
+
+    return False
+
+def is_multicomment(line):
+
+    try:
+        x = re.match(R_OBTW, line).groups()
+        dataset.append(["Comment Delimiter", x[1]])
+
+        if x[2]:
+            dataset.append(["Documentation", x[2]])
+
+
+
+        return True
+    except:
+        pass
+
+    return False
+
+
+def is_end_multicomment(line):
+
+    try:
+        x = re.match(R_TLDR, line).groups()
+        dataset.append(["Comment Delimiter", x[1]])
+
+        return True
+    except:
+        pass
+
+    return False
+
+def is_documentation(line):
+
+    dataset.append(["Documentation", line])
+    return True
+
+
+def is_anyof(line):
+
+    try:
+
+        x = re.match(R_ANYOF, line).groups()
+        dataset.append(["Boolean Operation", x[1]])
+        dataset.append(["Variable Identifier", x[2]])
+
+        
+        if re.match(R_INFINITE_TROOF, x[3]):
+            for i in re.findall(R_INFINITE_TROOF, x[3]):
+                i = i.split()
+                dataset.append(["Connector Keyword", i[0]])
+                dataset.append(["Troof Variable", i[1]])
+        else:
+            return False
+
+        
+        
+
+
+
+        return True
+
     except:
         pass
 
