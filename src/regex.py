@@ -28,7 +28,7 @@ R_OBTW = "(\s*)(OBTW) (-?[0-9]*\.[0-9]+|-?[0-9]+|[a-zA-Z]+[a-zA-Z0-9\_\s]*)"
 R_TLDR = "(\s*)(TLDR)"
 
 # If-Else Statements
-R_ORLY = "(\s*)(ORLY)"
+R_ORLY = "(\s*)(O RLY?)"
 R_YARLY = "(\s*)(YA RLY)"
 R_NOWAI = "(\s*)(NO WAI)"
 R_OIC = "(\s*)(OIC)"

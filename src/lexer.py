@@ -26,12 +26,15 @@ def statement_grammar(line):
 
     global TOGGLE
 
-    if is_var_initialize(line): return True
-    elif is_var_declare(line): return True
-    elif is_var_assign(line): return True
-    elif is_print(line): return True
-    elif is_input(line): return True
-    elif is_comment(line): return True
+    if (is_var_initialize(line) or
+        is_var_declare(line) or
+        is_var_assign(line) or
+        is_print(line) or
+        is_input(line) or 
+        is_comment(line)):
+
+        return True
+
 
     elif is_multicomment(line):
         TOGGLE = "MULTICOMMENT"
@@ -39,6 +42,10 @@ def statement_grammar(line):
 
     elif is_bye(line):
         TOGGLE = "END"
+        return True
+
+    elif is_if_then(line):
+        TOGGLE = "IF-THEN"
         return True
 
     elif is_anyof(line):
@@ -58,10 +65,21 @@ def comment_grammar(line):
 
     return False
 
-def tokenize(fn):
+def if_then_grammar(line):
 
     global TOGGLE
 
+    if is_if(line):
+        return True
+    elif is_else(line):
+        return True
+    elif is_end_if(line):
+        TOGGLE = "STATEMENT"
+        return True
+
+def tokenize(fn):
+
+    global TOGGLE
 
     try:
         f = open(fn, "r")
@@ -69,6 +87,7 @@ def tokenize(fn):
         print("File Error: file named", fn,"cannot be found")
         return
 
+    
 
     for num, line in enumerate(f):
 
@@ -79,6 +98,7 @@ def tokenize(fn):
 
         line = line.strip("\n")
 
+        
         
         if TOGGLE == "START":
 
@@ -103,7 +123,14 @@ def tokenize(fn):
             else:
                 show_error(fn, num, line)
                 break
-               
+
+        elif TOGGLE == "IF-THEN":
+
+            if if_then_grammar(line):
+                continue
+            else:
+                show_error(fn, num, line)
+                break
         
         elif TOGGLE == "END":
 
@@ -114,10 +141,10 @@ def tokenize(fn):
         elif TOGGLE == "MULTICOMMENT" and is_bye(line):
             show_error(fn, num, line)
             break
-
+        
     
 
-            # if is_if_then(line): continue
+            
             # if is_end_if(line): continue
             # if is_if(line): continue
 

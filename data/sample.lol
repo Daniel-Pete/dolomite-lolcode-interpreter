@@ -7,7 +7,8 @@ HAI
     I HAS A X
     X R 4
     VISIBLE X
-    OBTW K
-        HI
-    TLDR
+    O RLY?
+        YA RLY
+        NO WAI
+    OIC
 KTHXBYE
