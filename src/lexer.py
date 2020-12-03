@@ -2,12 +2,65 @@
 # Lexical Analyser
 # Nov 13 2020
 
-from checker import *
+from printer import *
 
-file = "../data/sample.txt"
+file = "../data/sample.lol"
 
+
+global TOGGLE 
+TOGGLE = "START"
+
+
+def start_grammar(line):
+    global TOGGLE
+
+    if is_hai(line):
+        TOGGLE = "STATEMENT"
+        return True
+    elif is_comment(line):
+        return True
+
+    return False
+
+def statement_grammar(line):
+
+    global TOGGLE
+
+    if is_var_initialize(line): return True
+    elif is_var_declare(line): return True
+    elif is_var_assign(line): return True
+    elif is_print(line): return True
+    elif is_input(line): return True
+    elif is_comment(line): return True
+
+    elif is_multicomment(line):
+        TOGGLE = "MULTICOMMENT"
+        return True
+
+    elif is_bye(line):
+        TOGGLE = "END"
+        return True
+
+    elif is_anyof(line):
+        return True
+
+    return False
+
+def comment_grammar(line):
+    global TOGGLE
+
+    if is_end_multicomment(line):
+        TOGGLE = "STATEMENT"
+        return True
+        
+    elif is_documentation(line): 
+        return True
+
+    return False
 
 def tokenize(fn):
+
+    global TOGGLE
 
 
     try:
@@ -16,7 +69,6 @@ def tokenize(fn):
         print("File Error: file named", fn,"cannot be found")
         return
 
-    TOGGLE = "START"
 
     for num, line in enumerate(f):
 
@@ -26,54 +78,32 @@ def tokenize(fn):
         # skips to the next iteration
 
         line = line.strip("\n")
+
         
         if TOGGLE == "START":
 
-            if is_hai(line):
-                TOGGLE = "STATEMENT"
+            if start_grammar(line):
                 continue
-            elif is_comment(line):
-                continue
-
             else:
                 show_error(fn, num, line)
                 break
 
         elif TOGGLE == "STATEMENT":
 
-            
-            if is_var_assign(line): continue
-            elif is_var_declare(line): continue
-            elif is_print(line): continue
-            elif is_input(line): continue
-            elif is_comment(line): continue
-
-            elif is_multicomment(line):
-                TOGGLE = "MULTICOMMENT"
+            if statement_grammar(line):
                 continue
-
-            elif is_bye(line): 
-                TOGGLE = "END"
-                continue
-
-            elif is_anyof(line): continue
-
             else:
                 show_error(fn, num, line)
                 break
         
         elif TOGGLE == "MULTICOMMENT":
 
-            if is_end_multicomment(line):
-                TOGGLE = "STATEMENT"
+            if comment_grammar(line):
                 continue
-
-            elif is_documentation(line):
-                continue
-
             else:
                 show_error(fn, num, line)
                 break
+               
         
         elif TOGGLE == "END":
 
@@ -82,45 +112,26 @@ def tokenize(fn):
                 break
 
         elif TOGGLE == "MULTICOMMENT" and is_bye(line):
-
             show_error(fn, num, line)
             break
 
+    
 
-
-
-            # if is_if_then(line): 
-            #     continue
-            # if is_end_if(line): 
-            #     continue
-            # if is_if(line): 
-            #     continue
+            # if is_if_then(line): continue
+            # if is_end_if(line): continue
+            # if is_if(line): continue
 
             # if is_else(line): continue
             # if is_switch(line): continue
             # if is_case(line): continue
             # if is_end_case(line): continue
         
-        
- 
-
-def print_lexemes():
     
-    print("\nLexemes")
-    for i in dataset:
-        print(i)
-    print()
-
-def print_vars():
-    print("\nVariables")
-    for i in varset:
-        print(i,"=",varset[i])
-    print()
 
 def main():
     tokenize(file)
 
     # print_lexemes()
-    print_vars()
+    # print_vars()
 
 main()

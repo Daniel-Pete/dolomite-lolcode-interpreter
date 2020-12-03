@@ -13,9 +13,10 @@ R_STR = "\"[^\"]*\""
 R_NUMBR = "-?[0-9]+"
 R_NUMBAR = "-?[0-9]*\.[0-9]"
 
-# Variable Declaration
+# Variable Declaration, Initialization, Assignment
 R_IHA = "(\s*)(I HAS A) ([a-zA-Z]+[a-zA-Z0-9\_]*)"
 R_IHAI = "(\s*)(I HAS A) ([a-zA-Z]+[a-zA-Z0-9\_]*) (ITZ) (-?[0-9]*\.[0-9]+|-?[0-9]+|\"[^\"]*\")"
+R_ASS = "(\s*)([a-zA-Z]+[a-zA-Z0-9\_]*) (R) (-?[0-9]*\.[0-9]+|-?[0-9]+|\"[^\"]*\")"
 
 # Input / Output
 R_VISI = "(\s*)(VISIBLE) (-?[0-9]*\.[0-9]+|-?[0-9]+|[a-zA-Z]+[a-zA-Z0-9\_]*|\"[^\"]*\")"
@@ -23,7 +24,7 @@ R_GIME = "(\s*)(GIMMEH) ([a-zA-Z]+[a-zA-Z0-9\_]*)"
 
 # Documentation
 R_BTW = "(\s*)(BTW) ([a-zA-Z0-9\_\s]*)"
-R_OBTW = "(\s*)(OBTW) (-?[0-9]*\.[0-9]+|-?[0-9]+|[a-zA-Z]+[a-zA-Z0-9\_]*)"
+R_OBTW = "(\s*)(OBTW) (-?[0-9]*\.[0-9]+|-?[0-9]+|[a-zA-Z]+[a-zA-Z0-9\_\s]*)"
 R_TLDR = "(\s*)(TLDR)"
 
 # If-Else Statements
