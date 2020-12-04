@@ -35,7 +35,13 @@ def tokenize(fn):
         if is_multiplication(line): continue
         if is_division(line): continue
         if is_max(line): continue
-        if is_min(line: continue
+        if is_min(line): continue
+        if is_and(line, 0): continue
+        if is_or(line, 0): continue
+        if is_xor(line, 0): continue
+        if is_not(line, 0): continue
+        if is_infinite_and(line): continue
+        if is_assign(line): continue
         
         else:
             print("Invalid Syntax on Line",num + 1,line)
