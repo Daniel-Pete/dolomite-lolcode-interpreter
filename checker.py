@@ -515,20 +515,23 @@ def is_assign(line):
         if re.match(R_STR, x[3]):
             new = x[3].strip('"')
             dataset.append(["String Literal", new])
+            return True
 
         if re.match(R_NUMBAR, x[3]):
             dataset.append(["Numbar Literal", x[3]])
+            return True
 
         if re.match(R_NUMBR, x[3]):
             dataset.append(["Numbr Literal", x[3]])
+            return True
 
-            if re.match(R_VARIABLE, x[3]):
-                dataset.append(["Variable Identifier", x[3]])
-                return True
+        if re.match(R_VARIABLE, x[3]):
+            dataset.append(["Variable Identifier", x[3]])
+            return True
 
         # It is an expression
-        if(boolean_type_checker(x[3], 0) == False): return False
-        if(arithmetic_type_checker(x[3]) == False): return False
+        if(boolean_type_checker(x[3], 0) != False): return True
+        if(arithmetic_type_checker(x[3]) != False): return True
 
         return True
     except:
