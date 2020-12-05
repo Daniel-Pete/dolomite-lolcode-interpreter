@@ -1,6 +1,8 @@
 # Branch David
-# Lexical Analyser
+# Regular Expressions
 # Nov 13 2020
+
+import sys
 
 R_LOOP = "^[a-zA-Z]+[a-zA-Z0-9\_]*$"
 

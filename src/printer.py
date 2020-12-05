@@ -1,5 +1,5 @@
 # Branch David
-# Lexical Analyser
+# Printer
 # Nov 13 2020
 
 from checker import *
