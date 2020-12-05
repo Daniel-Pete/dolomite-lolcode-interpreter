@@ -4,7 +4,9 @@
 
 from printer import *
 
-file = sys.argv[1]
+file = "../data/sample.lol"
+# file = sys.argv[1]
+
 
 global TOGGLE 
 TOGGLE = "START"
@@ -35,7 +37,8 @@ def statement_grammar(line):
         return True
 
 
-    elif is_multicomment(line):
+    elif (is_multicomment(line) or
+        is_multicomment2(line)):
         TOGGLE = "MULTICOMMENT"
         return True
 
@@ -76,11 +79,17 @@ def if_then_grammar(line):
         TOGGLE = "STATEMENT"
         return True
 
+def empty(line):
+
+    if is_empty(line):
+        return True
+
 def tokenize(fn):
 
-    
 
     global TOGGLE
+
+        
 
     try:
         f = open(fn, "r")
@@ -99,8 +108,10 @@ def tokenize(fn):
 
         line = line.strip("\n")
 
+        if empty(line):
+            continue
         
-        if TOGGLE == "START":
+        elif TOGGLE == "START":
 
             if start_grammar(line):
                 continue
@@ -149,6 +160,5 @@ def main():
     tokenize(file)
     # print_lexemes()
     # print_vars()
-
 
 main()

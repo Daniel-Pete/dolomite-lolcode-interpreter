@@ -13,13 +13,13 @@ def show_error(fn, num, line):
 def print_lexemes():
 
     print("\nLexemes")
-    for i in dataset:
+    for i in tokens:
         print(i)
     print()
 
 
 def print_vars():
     print("\nVariables")
-    for i in varset:
-        print(i, "=", varset[i])
+    for i in variables:
+        print(i, "=", variables[i])
     print()

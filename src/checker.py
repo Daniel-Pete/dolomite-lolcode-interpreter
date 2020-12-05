@@ -13,6 +13,14 @@ tokens = []
 variables = {}
 
 
+def is_empty(line):
+
+    if re.match(R_EMPTY, line):
+        return True
+
+    return False
+
+
 def is_var_initialize(line):
 
     # Checks if the
@@ -306,10 +314,23 @@ def is_multicomment(line):
         tokens.append([COM_DEL, match[1]])
 
         if match[2]:
-            tokens.append([DOC_ID, match[2]])
+            tokens.append([DOC_ID, match[3]])
 
 
         return True
+    except:
+        pass
+
+    return False
+
+def is_multicomment2(line):
+
+    try:
+        match = re.match(R_OBTW2, line).groups()
+        tokens.append([COM_DEL, match[1]])
+
+        return True
+
     except:
         pass
 

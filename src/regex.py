@@ -4,11 +4,13 @@
 
 import sys
 
+# Other
 R_LOOP = "^[a-zA-Z]+[a-zA-Z0-9\_]*$"
+R_EMPTY = "(^\s*$)"
 
 # Code Delimiters
-R_HAI = "^HAI$"
-R_KTB = "^KTHXBYE$"
+R_HAI = "^(\s*)HAI(\s*)$"
+R_KTB = "^(\s*)KTHXBYE(\s*)$"
 
 # Literals
 R_STR = "\"[^\"]*\""
@@ -21,28 +23,25 @@ R_IHAI = "(\s*)(I HAS A) ([a-zA-Z]+[a-zA-Z0-9\_]*) (ITZ) (-?[0-9]*\.[0-9]+|-?[0-
 R_ASS = "(\s*)([a-zA-Z]+[a-zA-Z0-9\_]*) (R) (-?[0-9]*\.[0-9]+|-?[0-9]+|\"[^\"]*\")"
 
 # Input / Output
-R_VISI = "(\s*)(VISIBLE) (-?[0-9]*\.[0-9]+|-?[0-9]+|[a-zA-Z]+[a-zA-Z0-9\_]*|\"[^\"]*\")"
-R_GIME = "(\s*)(GIMMEH) ([a-zA-Z]+[a-zA-Z0-9\_]*)"
+R_VISI = "(\s*)(VISIBLE) (-?[0-9]*\.[0-9]+|-?[0-9]+|[a-zA-Z]+[a-zA-Z0-9\_]*|\"[^\"]*\")(\s*)"
+R_GIME = "(\s*)(GIMMEH) ([a-zA-Z]+[a-zA-Z0-9\_]*)(\s*)"
 
 # Documentation
 R_BTW = "(\s*)(BTW) ([a-zA-Z0-9\_\s]*)"
-R_OBTW = "(\s*)(OBTW) (-?[0-9]*\.[0-9]+|-?[0-9]+|[a-zA-Z]+[a-zA-Z0-9\_\s]*)"
-R_TLDR = "(\s*)(TLDR)"
+R_OBTW2 = "(\s*)(OBTW)(\s*)"
+R_OBTW = "(\s*)(OBTW)(\s)(.*)"
+R_TLDR = "(\s*)(TLDR)(\s*)"
 
 # If-Else Statements
-R_ORLY = "(\s*)(O RLY?)"
-R_YARLY = "(\s*)(YA RLY)"
-R_NOWAI = "(\s*)(NO WAI)"
-R_OIC = "(\s*)(OIC)"
+R_ORLY = "(\s*)(O RLY?)(\s*)"
+R_YARLY = "(\s*)(YA RLY)(\s*)"
+R_NOWAI = "(\s*)(NO WAI)(\s*)"
+R_OIC = "(\s*)(OIC)(\s*)"
 
 # Switch-Case Statements
-R_WTF = "(\s*)(WTF\?)"
+R_WTF = "(\s*)(WTF\?)(\s*)"
 R_OMG = "(\s*)(OMG) (-?[0-9]+)"
-R_OMGWTF = "(\s*)(OMGWTF)"
-
-# Boolean Operation 
-R_ANYOF = "(\s*)(ANY OF) (WIN|FAIL) ([A-Z\s]*)"
-R_INFINITE_TROOF = "AN WIN|AN FAIL*"
+R_OMGWTF = "(\s*)(OMGWTF)(\s*)"
 
 
 # Classification
@@ -71,3 +70,4 @@ CON_KEY = "Connector Keyword"
 
 SYNTAX_ERROR = "Syntax Error."
 VAR_ERROR = "Undefined Error."
+FILE_ERROR = "File Error: file cannot be found"
