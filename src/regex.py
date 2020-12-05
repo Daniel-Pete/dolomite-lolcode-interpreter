@@ -16,10 +16,11 @@ R_KTB = "^(\s*)KTHXBYE(\s*)$"
 R_STR = "\"[^\"]*\""
 R_NUMBR = "-?[0-9]+"
 R_NUMBAR = "-?[0-9]*\.[0-9]"
+R_VARIDENT = "([a-zA-Z]+[a-zA-Z0-9\_]*)"
 
 # Variable Declaration, Initialization, Assignment
 R_IHA = "(\s*)(I HAS A) ([a-zA-Z]+[a-zA-Z0-9\_]*)"
-R_IHAI = "(\s*)(I HAS A) ([a-zA-Z]+[a-zA-Z0-9\_]*) (ITZ) (-?[0-9]*\.[0-9]+|-?[0-9]+|\"[^\"]*\")"
+R_IHAI = "(\s*)(I HAS A) ([a-zA-Z]+[a-zA-Z0-9\_]*) (ITZ) ([a-zA-Z]+[a-zA-Z0-9\_]*|-?[0-9]*\.[0-9]+|-?[0-9]+|\"[^\"]*\")"
 R_ASS = "(\s*)([a-zA-Z]+[a-zA-Z0-9\_]*) (R) (-?[0-9]*\.[0-9]+|-?[0-9]+|\"[^\"]*\")"
 
 # Input / Output

@@ -27,15 +27,16 @@ def statement_grammar(line):
 
     global TOGGLE
 
-    if (is_var_initialize(line) or
-        is_var_declare(line) or
-        is_var_assign(line) or
+    if is_var_initialize(line): return True
+
+    elif is_var_declare(line): return True
+        
+    elif (is_var_assign(line) or
         is_print(line) or
-        is_input(line) or 
+        is_input(line) or
         is_comment(line)):
 
         return True
-
 
     elif (is_multicomment(line) or
         is_multicomment2(line)):
@@ -49,10 +50,6 @@ def statement_grammar(line):
     elif is_if_then(line):
         TOGGLE = "IF-THEN"
         return True
-
-    elif is_anyof(line):
-        return True
-
     return False
 
 def comment_grammar(line):
@@ -86,10 +83,7 @@ def empty(line):
 
 def tokenize(fn):
 
-
     global TOGGLE
-
-        
 
     try:
         f = open(fn, "r")
@@ -107,6 +101,7 @@ def tokenize(fn):
         # skips to the next iteration
 
         line = line.strip("\n")
+
 
         if empty(line):
             continue
@@ -152,13 +147,16 @@ def tokenize(fn):
         elif TOGGLE == "MULTICOMMENT" and is_bye(line):
             show_error(fn, num, line)
             break
+
+
     
-        
     
 
 def main():
     tokenize(file)
     # print_lexemes()
-    # print_vars()
+    print_vars()
+
+    
 
 main()

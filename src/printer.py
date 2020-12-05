@@ -3,8 +3,11 @@
 # Nov 13 2020
 
 from checker import *
+global ERROR
 
 def show_error(fn, num, line):
+
+    global ERROR
 
     print("File", fn, "line", num + 1)
     print("\n\t", line, "\n")

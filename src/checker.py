@@ -43,8 +43,19 @@ def is_var_initialize(line):
         # the string is stripped of its
         # quotation marks
 
-        if re.match(R_STR, match[4]):
-            
+        # For assignment from another variable
+        if re.match(R_VARIDENT, match[4]):
+
+            try:
+                if variables.__contains__(match[4]):
+                    
+                    variables[str(match[2])] = variables[match[4]]
+                    return True
+            except:
+                return False
+
+        elif re.match(R_STR, match[4]):
+
             new = match[4].strip('"')
             tokens.append([STR_LIT, new])
 
@@ -353,32 +364,3 @@ def is_documentation(line):
 
     tokens.append([DOC_ID, line])
     return True
-
-
-def is_anyof(line):
-
-    try:
-
-        match = re.match(R_ANYOF, line).groups()
-        tokens.append([BOOL_OP, match[1]])
-        tokens.append([VAR_IDENT, match[2]])
-
-        
-        if re.match(R_INFINITE_TROOF, match[3]):
-
-            for i in re.findall(R_INFINITE_TROOF, match[3]):
-                
-                i = i.split()
-                tokens.append([CON_KEY, i[0]])
-                tokens.append([TROOF_LIT, i[1]])
-
-        else:
-            return False
-
-
-        return True
-
-    except:
-        pass
-
-    return False
