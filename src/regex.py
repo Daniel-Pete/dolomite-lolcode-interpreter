@@ -4,10 +4,6 @@
 
 import sys
 
-# Other
-R_LOOP = "^[a-zA-Z]+[a-zA-Z0-9\_]*$"
-R_EMPTY = "(^\s*$)"
-
 # Code Delimiters
 R_HAI = "^(\s*)HAI(\s*)$"
 R_KTB = "^(\s*)KTHXBYE(\s*)$"
@@ -44,6 +40,15 @@ R_WTF = "(\s*)(WTF\?)(\s*)"
 R_OMG = "(\s*)(OMG) (-?[0-9]+)"
 R_OMGWTF = "(\s*)(OMGWTF)(\s*)"
 
+# Other
+R_LOOP = "^[a-zA-Z]+[a-zA-Z0-9\_]*$"
+R_EMPTY = "(^\s*$)"
+R_SMOOSH = "(\s*)(SMOOSH) (.*)"
+
+R_SMOOSH_HELP = r'(?:[^\s,"]|"(?:\\.|[^"])*")+' 
+# Taken From:
+# https://stackoverflow.com/questions/16710076/python-split-a-string-respect-and-preserve-quotes/16710842
+
 
 # Classification
 
@@ -65,6 +70,7 @@ COM = "Comment"
 CF_KEY = "Control-Flow Keyword"
 BOOL_OP = "Boolean Operation"
 CON_KEY = "Connector Keyword"
+CAT_OP = "Concatenation Keyword"
 
 
 # Error Messages

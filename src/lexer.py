@@ -34,12 +34,13 @@ def statement_grammar(line):
     elif (is_var_assign(line) or
         is_print(line) or
         is_input(line) or
-        is_comment(line)):
+        is_comment(line) or
+        is_smoosh(line)):
 
         return True
 
-    elif (is_multicomment(line) or
-        is_multicomment2(line)):
+    elif (is_multicomment_a(line) or
+        is_multicomment_b(line)):
         TOGGLE = "MULTICOMMENT"
         return True
 
@@ -147,15 +148,13 @@ def tokenize(fn):
         elif TOGGLE == "MULTICOMMENT" and is_bye(line):
             show_error(fn, num, line)
             break
-
-
-    
     
 
 def main():
     tokenize(file)
+    
     # print_lexemes()
-    print_vars()
+    # print_vars()
 
     
 
