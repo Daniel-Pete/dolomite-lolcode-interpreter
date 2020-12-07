@@ -110,7 +110,7 @@ def tokenize(fn):
                 continue
             else:
                 show_error(fn, num, line)
-                break
+                return
 
         elif TOGGLE == "STATEMENT":
 
@@ -118,7 +118,7 @@ def tokenize(fn):
                 continue
             else:
                 show_error(fn, num, line)
-                break
+                return
         
         elif TOGGLE == "MULTICOMMENT":
 
@@ -126,24 +126,24 @@ def tokenize(fn):
                 continue
             else:
                 show_error(fn, num, line)
-                break
+                return
 
         elif TOGGLE == "IF-THEN":
             if if_then_grammar(line):
                 continue
-            else:
+            else:''
                 show_error(fn, num, line)
-                break
+                return
 
         elif TOGGLE == "MULTICOMMENT" and is_bye(line):
             show_error(fn, num, line)
-            break
+            return
 
         elif TOGGLE == "END":
 
             if line:
                 show_error(fn, num, line)
-                break
+                return
     
     # If program ends without KTHXBYE
     # then it will be an error.
