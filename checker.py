@@ -1,9 +1,10 @@
 import re
 from regex import *
 
-dataset = []
+tokens = []
+variables = {}
 
-def is_var_assign(line):
+def is_var_initialize(line):
 
     # Checks if the
     # line is variable
@@ -14,53 +15,52 @@ def is_var_assign(line):
         # Access the matches
         # through the use of groups
 
-        x = re.match(R_IHAI, line).groups()
-        dataset.append(["Variable Declaration", str(x[1])])
-        dataset.append(["Variable Identifier", str(x[2])])
-        dataset.append(["Variable Assignment", str(x[3])])
+        match = re.match(R_IHAI, line).groups()
+        
+        tokens.append([VAR_DEC, str(match[1])])
+        tokens.append([VAR_IDENT, str(match[2])])
 
-        # If the variable matches a string
-        # the string is stripped of its
-        # quotation marks
+        if match[3]: tokens.append([VAR_ASS, str(match[3])])
 
-        if re.match(R_STR, x[4]):
-            new = x[4].strip('"')
-            dataset.append(["String Literal", new])
 
-        elif re.match(R_NUMBAR, x[4]):
-            dataset.append(["Numbar Literal", x[4]])
+        if re.match(R_VARIDENT, match[4]):
 
-        elif re.match(R_NUMBR, x[4]):
-            dataset.append(["Numbr Literal", x[4]])
+            # For assignment from
+            # another variable, it must first
+            # check if the other variable exists.
+
+            try:
+                if variables.__contains__(match[4]):
+                    
+                    variables[str(match[2])] = variables[match[4]]
+                    return True
+            except:
+                return False
+
+        elif re.match(R_STR, match[4]):
+
+            # If the variable matches a string
+            # the string is stripped of its
+            # quotation marks
+
+            new = match[4].strip('"')
+            tokens.append([STR_LIT, new])
+
+        elif re.match(R_NUMBAR, match[4]):
+            tokens.append([NBR_LIT, match[4]])
+
+        elif re.match(R_NUMBR, match[4]):
+            tokens.append([NBAR_LIT, match[4]])
+
+        variables[str(match[2])] = match[4]
+
 
         return True
 
     except:
 
         pass
-
-    # If it doesn't match
-    # the next
-
-    return False
-
-
-def is_var_declare(line):
-
-    # Checks if the
-    # line is for variable
-    # declaration
-
-    try:
-        x = re.match(R_IHA, line).groups()
-        dataset.append(["Variable Declaration", x[1]])
-        dataset.append(["Variable Identifier", x[2]])
-
-        return True
-
-    except:
-        pass
-
+    
     return False
 
 def is_code_delimiter(line):
@@ -70,7 +70,7 @@ def is_code_delimiter(line):
     # or KTHXBYE
 
     if re.match(R_HAI, line) or re.match(R_KTB, line):
-        dataset.append(["Code Connector", line])
+        tokens.append(["Code Connector", line])
         return True
 
     return False
@@ -83,9 +83,9 @@ def is_equal_comparison(line):
         if(is_min_or_max(x[2]) != False):
             category = is_min_or_max(x[2])
         
-        dataset.append([category+"Eq Comparison Operator", x[1]])
+        tokens.append([category+"Eq Comparison Operator", x[1]])
         if(arithmetic_type_checker(x[2]) == False): return False
-        dataset.append([category+"Eq Comparison Connector", x[3]])
+        tokens.append([category+"Eq Comparison Connector", x[3]])
         if(arithmetic_type_checker(x[4]) == False): return False
 
         return True
@@ -103,9 +103,9 @@ def is_notequal_comparison(line):
             category = is_min_or_max(x[2])
         
         if category == "": category = "NE"
-        dataset.append([category+" Comparison Operator", x[1]])
+        tokens.append([category+" Comparison Operator", x[1]])
         if(arithmetic_type_checker(x[2]) == False): return False
-        dataset.append([category+" Comparison Connector", x[3]])
+        tokens.append([category+" Comparison Connector", x[3]])
         if(arithmetic_type_checker(x[4]) == False): return False
 
         return True
@@ -123,7 +123,7 @@ def is_min_or_max(line):
 def is_addition(line, expression):
     try:
         x = re.match(RE_ADDITION, line).groups()
-        dataset.append(["Addition Operator", x[1]])
+        tokens.append(["Addition Operator", x[1]])
 
         expression += "("
         op1_exp = arithmetic_type_checker(x[2], expression)
@@ -132,7 +132,7 @@ def is_addition(line, expression):
             expression = op1_exp[1]
             expression += op1_exp[0]
 
-        dataset.append(["Addition Connector", x[3]])
+        tokens.append(["Addition Connector", x[3]])
         expression+="+"
 
         op2_exp = arithmetic_type_checker(x[4], expression)
@@ -152,7 +152,7 @@ def is_addition(line, expression):
 def is_subtraction(line, expression):
     try:
         x = re.match(RE_SUBTRACTION, line).groups()
-        dataset.append(["Subtraction Operator", x[1]])
+        tokens.append(["Subtraction Operator", x[1]])
 
         expression += "("
         op1_exp = arithmetic_type_checker(x[2], expression)
@@ -161,7 +161,7 @@ def is_subtraction(line, expression):
             expression = op1_exp[1] 
             expression += op1_exp[0]
 
-        dataset.append(["Subtraction Connector", x[3]])
+        tokens.append(["Subtraction Connector", x[3]])
         expression+="-"
 
         op2_exp = arithmetic_type_checker(x[4], expression)
@@ -181,7 +181,7 @@ def is_subtraction(line, expression):
 def is_multiplication(line, expression):
     try:
         x = re.match(RE_MULTIPLICATION, line).groups()
-        dataset.append(["Multiplication Operator", x[1]])
+        tokens.append(["Multiplication Operator", x[1]])
 
         expression += "("
         op1_exp = arithmetic_type_checker(x[2], expression)
@@ -190,7 +190,7 @@ def is_multiplication(line, expression):
             expression = op1_exp[1] 
             expression += op1_exp[0]
 
-        dataset.append(["Multiplication Connector", x[3]])
+        tokens.append(["Multiplication Connector", x[3]])
         expression+="*"
 
         op2_exp = arithmetic_type_checker(x[4], expression)
@@ -210,7 +210,7 @@ def is_multiplication(line, expression):
 def is_division(line, expression):
     try:
         x = re.match(RE_DIVISION, line).groups()
-        dataset.append(["Division Operator", x[1]])
+        tokens.append(["Division Operator", x[1]])
 
         expression += "("
         op1_exp = arithmetic_type_checker(x[2], expression)
@@ -219,7 +219,7 @@ def is_division(line, expression):
             expression = op1_exp[1] 
             expression += op1_exp[0]
 
-        dataset.append(["Division Connector", x[3]])
+        tokens.append(["Division Connector", x[3]])
         expression+="/"
 
         op2_exp = arithmetic_type_checker(x[4], expression)
@@ -239,9 +239,9 @@ def is_division(line, expression):
 def is_max(line):
     try:
         x = re.match(RE_MAX, line).groups()
-        dataset.append(["Max Operator", x[1]])
+        tokens.append(["Max Operator", x[1]])
         if(arithmetic_type_checker(x[2]) == False): return False
-        dataset.append(["Max Connector", x[3]])
+        tokens.append(["Max Connector", x[3]])
         if(arithmetic_type_checker(x[4]) == False): return False
     
         return True
@@ -253,9 +253,9 @@ def is_max(line):
 def is_min(line):
     try:
         x = re.match(RE_MIN, line).groups()
-        dataset.append(["Min Operator", x[1]])
+        tokens.append(["Min Operator", x[1]])
         if(arithmetic_type_checker(x[2]) == False): return False
-        dataset.append(["Min Connector", x[3]])
+        tokens.append(["Min Connector", x[3]])
         if(arithmetic_type_checker(x[4]) == False): return False
     
         return True
@@ -279,20 +279,21 @@ def arithmetic_type_checker(line, expression):
     # line/string is either a literal or variable
     if re.match(R_STR, line):
         new = line.strip('"')
-        dataset.append(["String Literal", new])
+        tokens.append(["String Literal", new])
         return([str(new), expression])
 
     elif re.match(R_NUMBAR, line):
-        dataset.append(["Numbar Literal", line])
+        tokens.append(["Numbar Literal", line])
         return([str(line), expression])
 
     elif re.match(R_NUMBR, line):
-        dataset.append(["Numbr Literal", line])
+        tokens.append(["Numbr Literal", line])
         return([str(line), expression])
 
     elif re.match(R_VARIABLE, line):
-        dataset.append(["Variable Identifier", line])
-        return([str(line), expression])
+        if variables.__contains__(line):
+            tokens.append(["Variable Identifier", line])
+            return([str(variables[line]), expression])
 
     # if no matches == invalid data type for arithmetic operations
     else: return False
@@ -301,7 +302,7 @@ def arithmetic_type_checker(line, expression):
 def is_and(line, mode, expression):
     try:
         x = re.match(RE_AND, line).groups()
-        dataset.append(["And Operator", x[1]])
+        tokens.append(["And Operator", x[1]])
 
         expression += "("
         op1_exp = boolean_type_checker(x[2], 0, expression)
@@ -310,7 +311,7 @@ def is_and(line, mode, expression):
             expression = op1_exp[1]
             expression += op1_exp[0]
 
-        dataset.append(["And Connector", x[3]])
+        tokens.append(["And Connector", x[3]])
         expression+=" and "
 
         op2_exp = boolean_type_checker(x[4], mode, expression)
@@ -329,7 +330,7 @@ def is_and(line, mode, expression):
 def is_or(line, mode, expression):
     try:
         x = re.match(RE_OR, line).groups()
-        dataset.append(["Or Operator", x[1]])
+        tokens.append(["Or Operator", x[1]])
 
         expression += "("
         op1_exp = boolean_type_checker(x[2], 0, expression)
@@ -338,7 +339,7 @@ def is_or(line, mode, expression):
             expression = op1_exp[1] 
             expression += op1_exp[0]
 
-        dataset.append(["Or Connector", x[3]])
+        tokens.append(["Or Connector", x[3]])
         expression+=" or "
 
         op2_exp = boolean_type_checker(x[4], mode, expression)
@@ -358,7 +359,7 @@ def is_or(line, mode, expression):
 def is_xor(line, mode, expression):
     try:
         x = re.match(RE_XOR, line).groups()
-        dataset.append(["Xor Operator", x[1]])
+        tokens.append(["Xor Operator", x[1]])
 
         expression += "("
         op1_exp = boolean_type_checker(x[2], 0, expression)
@@ -367,7 +368,7 @@ def is_xor(line, mode, expression):
             expression = op1_exp[1] 
             expression += op1_exp[0]
 
-        dataset.append(["Xor Connector", x[3]])
+        tokens.append(["Xor Connector", x[3]])
         expression+=" ^ "
 
         op2_exp = boolean_type_checker(x[4], mode, expression)
@@ -387,7 +388,7 @@ def is_xor(line, mode, expression):
 def is_not(line, mode, expression):
     try:
         x = re.match(RE_NOT, line).groups()
-        dataset.append(["Not Operator", x[1]])
+        tokens.append(["Not Operator", x[1]])
         expression += "("
         op1_exp = boolean_type_checker(x[2], 0, expression)
         if(op1_exp == False): return False
@@ -406,7 +407,7 @@ def is_not(line, mode, expression):
 def is_infinite_and(line, expression):
     try:
         x = re.match(RE_INFINITE_AND, line).groups()
-        dataset.append(["Infinite And Operator", x[1]])
+        tokens.append(["Infinite And Operator", x[1]])
         op1_exp = boolean_type_checker(x[2], "And", expression)
         if(op1_exp == False): return False
         else:
@@ -422,7 +423,7 @@ def is_infinite_and(line, expression):
 def is_infinite_or(line, expression):
     try:
         x = re.match(RE_INFINITE_OR, line).groups()
-        dataset.append(["Infinite And Operator", x[1]])
+        tokens.append(["Infinite And Operator", x[1]])
         op1_exp = boolean_type_checker(x[2], "Or", expression)
         if(op1_exp == False): return False
         else:
@@ -439,26 +440,33 @@ def is_infinite_or(line, expression):
 def boolean_type_checker(line, mode, expression):
     # Check if line/string is either a troof literal or variable
     if re.match(R_TROOF, line):
-        dataset.append(["TROOF Literal", line])
+        tokens.append(["TROOF Literal", line])
         return([str(line), expression])
 
     if re.match(R_VARIABLE, line):
-        dataset.append(["Variable Identifier", line])
-        return([str(line), expression])
-
-    if re.match(RE_INFBOOL_DELIMITER, line):
-        dataset.append([mode+"Delimiter", line])
-        return([str(line), expression])
+        if variables.__contains__(line):
+            tokens.append(["Variable Identifier", line])
+            return([str(variables[line]), expression])
 
     # To handle last 2 strings (literal/variable and delimiter)
     end_strings = line.split(" ")
     if len(end_strings) == 2:
         if re.match(R_TROOF, end_strings[0]):
-            dataset.append(["TROOF Literal", end_strings[0]])
+            tokens.append(["TROOF Literal", end_strings[0]])
+            arg1 = str(end_strings[0])
+        elif re.match(R_VARIABLE, end_strings[0]):
+            # Check if variable exists in variables dictionary
+            if variables.__contains__(end_strings[0]):
+                tokens.append(["Variable Identifier", end_strings[0]])
+                arg1 = str(variables[end_strings[0]])
+            # Variable referenced does not exist
+            else:
+                return False
+            
         if re.match(RE_INFBOOL_DELIMITER, end_strings[1]):
-            dataset.append(["Infinite "+mode+" Delimiter", end_strings[1]])
+            tokens.append(["Infinite "+mode+" Delimiter", end_strings[1]])
         
-        return([str(end_strings[0])+")", expression])
+        return([arg1 + ")", expression])
 
     elif(mode == 0): return False       # Mode 0 expects 1 troof literal only, otherwise it's an error
     
@@ -479,7 +487,7 @@ def boolean_type_checker(line, mode, expression):
         op1_exp = boolean_type_checker(x[0], 0, expression)
         if(op1_exp == False): return False
         else:
-            dataset.append([mode+" Connector", x[1]])
+            tokens.append([mode+" Connector", x[1]])
             expression = op1_exp[1]
             expression += op1_exp[0] + ") " + mode.lower() + " "
             op2_exp = boolean_type_checker(x[2], mode, expression)
@@ -500,31 +508,31 @@ def is_assign(line):
     try:
         x = re.match(RE_ASSIGN, line).groups()
         if(re.match(R_VARIABLE, x[1])):
-            dataset.append(["Variable Identifier", x[1]])
+            tokens.append(["Variable Identifier", x[1]])
         else: return False
 
-        dataset.append(["Assignment Operator", x[2]])
+        tokens.append(["Assignment Operator", x[2]])
 
         # Check if final argument is either a literal or variable
         if re.match(R_TROOF, x[3]):
-            dataset.append(["TROOF Literal", x[3]])
+            tokens.append(["TROOF Literal", x[3]])
             return True
 
         if re.match(R_STR, x[3]):
             new = x[3].strip('"')
-            dataset.append(["String Literal", new])
+            tokens.append(["String Literal", new])
             return True
 
         if re.match(R_NUMBAR, x[3]):
-            dataset.append(["Numbar Literal", x[3]])
+            tokens.append(["Numbar Literal", x[3]])
             return True
 
         if re.match(R_NUMBR, x[3]):
-            dataset.append(["Numbr Literal", x[3]])
+            tokens.append(["Numbr Literal", x[3]])
             return True
 
         if re.match(R_VARIABLE, x[3]):
-            dataset.append(["Variable Identifier", x[3]])
+            tokens.append(["Variable Identifier", x[3]])
             return True
 
         # It is an expression

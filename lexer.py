@@ -18,6 +18,7 @@ def tokenize(fn):
         # if is_var_assign(line): continue
         # if is_var_declare(line): continue
         if is_code_delimiter(line): continue
+        if is_var_initialize(line): continue
         # if is_print(line): continue
         # if is_input(line): continue
         # if is_comment(line): continue
@@ -48,7 +49,7 @@ def display(ds):
 
 def main():
     tokenize(file)
-    display(dataset)
+    display(tokens)
 
 main()
 
