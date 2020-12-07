@@ -101,9 +101,9 @@ def tokenize(fn):
 
         line = line.strip("\n")
 
-
         if empty(line):
             continue
+        
         elif TOGGLE == "START":
 
             if start_grammar(line):
@@ -144,6 +144,12 @@ def tokenize(fn):
             if line:
                 show_error(fn, num, line)
                 break
+    
+    # If program ends without KTHXBYE
+    # then it will be an error.
+
+    if TOGGLE != "END":
+        show_error(fn, num, line)
 
 def main():
     tokenize(file)
