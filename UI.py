@@ -1,6 +1,6 @@
 from tkinter import *
 from tkinter import ttk
-from tkinter import filedialog
+from tkinter import filedialog, simpledialog
 
 
 root = Tk()
@@ -19,8 +19,20 @@ def clear():
 
 # save the text in the text area
 def saveText():
-    input = textArea.get("1.0",END)
+    input = textArea.get("1.0", END)
     print(input)
+
+
+def getOutput():
+	outputText.config(state = NORMAL)
+	outputText.delete(1.0, END)
+	outputText.insert(END, textArea.get("1.0", END))
+	getInputFromUser()
+	outputText.config(state = DISABLED)
+
+def getInputFromUser():
+	gimmeInput = simpledialog.askstring("GIMME INPUT", "Enter your input")
+	print(gimmeInput)
 
 # frame for file button
 buttonFileFrame = Frame(root)
@@ -30,22 +42,56 @@ buttonFileFrame.pack(pady=20)
 textFileFrame = Frame(root)
 textFileFrame.pack(pady=20)
 
+# frame for the execute button
+executeButtonFrame = Frame(root)
+executeButtonFrame.pack(pady=20)
+
 
 fileButton = Button(buttonFileFrame, text = "Select File", command = openFile, height = 1, width = 43)
 fileButton.pack()
 
-textArea = Text(textFileFrame, font = ("Helvetica", 11), height = 20, width = 40,)
+
+textScrollbar = Scrollbar(textFileFrame)
+textScrollbar.pack(side = RIGHT, fill = Y)
+
+textArea = Text(textFileFrame, font = ("Helvetica", 11), height = 14, width = 40)
 textArea.pack()
 
-clearButton = Button(textFileFrame, text = "Clear Text", command = clear, height = 1, width = 21)
+clearButton = Button(textFileFrame, text = "CLEAR", command = clear, height = 1, width = 21)
 clearButton.pack(side = LEFT)
 
-saveButton = Button(textFileFrame, text = "Save Text", command = saveText, height = 1, width = 21)
+saveButton = Button(textFileFrame, text = "SAVE", command = saveText, height = 1, width = 21)
 saveButton.pack(side = RIGHT)
+
+executeButton = Button(executeButtonFrame, text = "EXECUTE", command = getOutput, height = 1, width = 100)
+executeButton.pack()
 
 # window location of buttons and text area
 buttonFileFrame.place(x = 200, y = 10, anchor = N)
 textFileFrame.place(x = 200, y = 50, anchor = N)
+executeButtonFrame.place(x = 600, y = 350, anchor = N)
+
+
+outputFrame = Frame(root)
+outputFrame.pack(pady=20)
+
+outputScrollbar = Scrollbar(outputFrame)
+outputScrollbar.pack(side = RIGHT, fill = Y)
+
+outputText = Text(outputFrame, font = ("Helvetica", 11), height = 15, width = 100, state = DISABLED)
+outputText.pack()
+
+
+
+outputText.config(yscrollcommand = outputScrollbar.set)
+outputScrollbar.config(command = outputText.yview)
+
+
+
+outputFrame.place(x = 600, y = 400, anchor = N)
+
+textArea.config(yscrollcommand = textScrollbar.set)
+textScrollbar.config(command = textArea.yview)
 
 
 # the lexemes and symbol table treeview code is based from this source code: https://github.com/flatplanet/Intro-To-TKinter-Youtube-Course/blob/master/tree.py
@@ -61,9 +107,9 @@ lexemeStyle.configure("Treeview",
 	rowheight=25,
 	fieldbackground="#D3D3D3"
 	)
-# Change selected color
-lexemeStyle.map('Treeview', 
-	background=[('selected', 'blue')])
+# # Change selected color
+# lexemeStyle.map('Treeview', 
+# 	background=[('selected', 'blue')])
 
 # Create Treeview Frame
 lexemeFrame = Frame(root)
@@ -128,14 +174,14 @@ lexemeData = [
 lexemeTable.tag_configure('lexemes_bg', background="white")
 
 
-global count
-count=0
+global lexemeCount
+lexemeCount=0
 
 
 for record in lexemeData:
 
-	lexemeTable.insert(parent='', index='end', iid=count, text="", values=(record[0], record[1]), tags=('lexemes_bg',))
-	count += 1
+	lexemeTable.insert(parent='', index='end', iid=lexemeCount, text="", values=(record[0], record[1]), tags=('lexemes_bg',))
+	lexemeCount += 1
 
 
 
