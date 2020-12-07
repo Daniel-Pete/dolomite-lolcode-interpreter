@@ -63,7 +63,6 @@ def is_var_declare(line):
 
     return False
 
-
 def is_code_delimiter(line):
 
     # Checks if the
@@ -73,156 +72,6 @@ def is_code_delimiter(line):
     if re.match(R_HAI, line) or re.match(R_KTB, line):
         dataset.append(["Code Connector", line])
         return True
-
-    return False
-
-
-def is_print(line):
-
-    # Checks if the line
-    # is for printing
-
-    try:
-
-        x = re.match(R_VISI, line).groups()
-        dataset.append(["Print Identifier", x[0]])
-        dataset.append(["Variable Identifier", x[1]])
-
-        return True
-    except:
-        pass
-
-    return False
-
-
-def is_input(line):
-
-    # Checks if the line
-    # asks for an input
-
-    try:
-        x = re.match(R_GIME, line).groups()
-        dataset.append(["Input Identifier", x[0]])
-        dataset.append(["Variable Identifier", x[1]])
-
-        return True
-    except:
-        pass
-
-    return False
-
-
-def is_comment(line):
-
-    # Checks if the
-    # line is a comment
-
-    try:
-        x = re.match(R_BTW, line).groups()
-        dataset.append(["Comment Identifier", x[1]])
-        dataset.append(["Comment", x[2]])
-
-        return True
-    except:
-        pass
-
-    return False
-
-
-def is_if_then(line):
-
-    try:
-        x = re.match(R_ORLY, line).groups()
-        dataset.append(["Control Flow Keyword", x[1]])
-        return True
-    except:
-        pass
-
-    return False
-
-
-def is_end_if(line):
-
-    try:
-        x = re.match(R_OIC, line).groups()
-        dataset.append(["Control Flow Keyword", x[1]])
-        return True
-    except:
-        pass
-
-    return False
-
-
-def is_if(line):
-
-    try:
-        x = re.match(R_YARLY, line).groups()
-        dataset.append(["Control Flow Keyword", x[1]])
-        return True
-    except:
-        pass
-
-    return False
-
-
-def is_else(line):
-
-    try:
-        x = re.match(R_NOWAI, line).groups()
-        dataset.append(["Control Flow Keyword", x[1]])
-        return True
-    except:
-        pass
-
-    return False
-
-
-def is_switch(line):
-
-    try:
-        x = re.match(R_NOWAI, line).groups()
-        dataset.append(["Control Flow Keyword", x[1]])
-        return True
-    except:
-        pass
-
-    return False
-
-
-def is_switch(line):
-
-    try:
-        x = re.match(R_WTF, line).groups()
-        dataset.append(["Control Flow Keyword", x[1]])
-        return True
-    except:
-        pass
-
-    return False
-
-
-def is_case(line):
-
-    try:
-        x = re.match(R_OMG, line).groups()
-        dataset.append(["Control Flow Keyword", x[1]])
-        dataset.append(["Value Literal", x[2]])
-
-        return True
-    except:
-        pass
-
-    return False
-
-def is_end_case(line):
-
-    try:
-        x = re.match(R_OMGWTF, line).groups()
-        dataset.append(["Control Flow Keyword", x[1]])
-
-        return True
-    except:
-        pass
 
     return False
 
@@ -271,57 +120,117 @@ def is_min_or_max(line):
 
     return False
 
-def is_addition(line):
+def is_addition(line, expression):
     try:
         x = re.match(RE_ADDITION, line).groups()
         dataset.append(["Addition Operator", x[1]])
-        if(arithmetic_type_checker(x[2]) == False): return False
+
+        expression += "("
+        op1_exp = arithmetic_type_checker(x[2], expression)
+        if(op1_exp == False): return False
+        else:
+            expression = op1_exp[1]
+            expression += op1_exp[0]
+
         dataset.append(["Addition Connector", x[3]])
-        if(arithmetic_type_checker(x[4]) == False): return False
+        expression+="+"
+
+        op2_exp = arithmetic_type_checker(x[4], expression)
+        if(op2_exp == False): return False
+        else: 
+            expression = op2_exp[1]
+            expression += op2_exp[0]
+
+        expression+=")"
     
-        return True
+        return(expression)
     except:
         pass
 
     return False
 
-def is_subtraction(line):
+def is_subtraction(line, expression):
     try:
         x = re.match(RE_SUBTRACTION, line).groups()
         dataset.append(["Subtraction Operator", x[1]])
-        if(arithmetic_type_checker(x[2]) == False): return False
+
+        expression += "("
+        op1_exp = arithmetic_type_checker(x[2], expression)
+        if(op1_exp == False): return False
+        else:
+            expression = op1_exp[1] 
+            expression += op1_exp[0]
+
         dataset.append(["Subtraction Connector", x[3]])
-        if(arithmetic_type_checker(x[4]) == False): return False
+        expression+="-"
+
+        op2_exp = arithmetic_type_checker(x[4], expression)
+        if(op2_exp == False): return False
+        else: 
+            expression = op2_exp[1]
+            expression += op2_exp[0]
+
+        expression+=")"
     
-        return True
+        return(expression)
     except:
         pass
 
     return False
 
-def is_multiplication(line):
+def is_multiplication(line, expression):
     try:
         x = re.match(RE_MULTIPLICATION, line).groups()
         dataset.append(["Multiplication Operator", x[1]])
-        if(arithmetic_type_checker(x[2]) == False): return False
+
+        expression += "("
+        op1_exp = arithmetic_type_checker(x[2], expression)
+        if(op1_exp == False): return False
+        else:
+            expression = op1_exp[1] 
+            expression += op1_exp[0]
+
         dataset.append(["Multiplication Connector", x[3]])
-        if(arithmetic_type_checker(x[4]) == False): return False
+        expression+="*"
+
+        op2_exp = arithmetic_type_checker(x[4], expression)
+        if(op2_exp == False): return False
+        else: 
+            expression = op2_exp[1]
+            expression += op2_exp[0]
+
+        expression+=")"
     
-        return True
+        return(expression)
     except:
         pass
 
     return False
 
-def is_division(line):
+def is_division(line, expression):
     try:
         x = re.match(RE_DIVISION, line).groups()
         dataset.append(["Division Operator", x[1]])
-        if(arithmetic_type_checker(x[2]) == False): return False
+
+        expression += "("
+        op1_exp = arithmetic_type_checker(x[2], expression)
+        if(op1_exp == False): return False
+        else:
+            expression = op1_exp[1] 
+            expression += op1_exp[0]
+
         dataset.append(["Division Connector", x[3]])
-        if(arithmetic_type_checker(x[4]) == False): return False
+        expression+="/"
+
+        op2_exp = arithmetic_type_checker(x[4], expression)
+        if(op2_exp == False): return False
+        else: 
+            expression = op2_exp[1]
+            expression += op2_exp[0]
+
+        expression+=")"
     
-        return True
+        return(expression)
     except:
         pass
 
@@ -356,140 +265,229 @@ def is_min(line):
     return False
 
 # fxn to check and handle arguments/operands of arithmetic operations
-def arithmetic_type_checker(line):
+def arithmetic_type_checker(line, expression):
     # Check first if it's an arithmetic operation and will recall the fxn to handle them
-    if is_addition(line): return ""
-    if is_subtraction(line): return ""
-    if is_multiplication(line): return ""
-    if is_division(line): return ""
-    if is_min(line): return "LT"
-    if is_max(line): return "GT"
+    summ = is_addition(line, expression)
+    if summ != False: return(["",summ])
+    diff = is_subtraction(line, expression)
+    if diff != False: return(["",diff])
+    prod = is_multiplication(line, expression)
+    if prod != False: return(["",prod])
+    quot = is_division(line, expression)
+    if quot != False: return(["",quot])
     
     # line/string is either a literal or variable
     if re.match(R_STR, line):
         new = line.strip('"')
         dataset.append(["String Literal", new])
+        return([str(new), expression])
 
     elif re.match(R_NUMBAR, line):
         dataset.append(["Numbar Literal", line])
+        return([str(line), expression])
 
     elif re.match(R_NUMBR, line):
         dataset.append(["Numbr Literal", line])
+        return([str(line), expression])
 
     elif re.match(R_VARIABLE, line):
         dataset.append(["Variable Identifier", line])
+        return([str(line), expression])
 
     # if no matches == invalid data type for arithmetic operations
     else: return False
 
 # Boolean Operations
-def is_and(line, mode):
+def is_and(line, mode, expression):
     try:
         x = re.match(RE_AND, line).groups()
         dataset.append(["And Operator", x[1]])
-        if(boolean_type_checker(x[2], 0) == False): return False
+
+        expression += "("
+        op1_exp = boolean_type_checker(x[2], 0, expression)
+        if(op1_exp == False): return False
+        else:
+            expression = op1_exp[1]
+            expression += op1_exp[0]
+
         dataset.append(["And Connector", x[3]])
-        if(boolean_type_checker(x[4], mode) == False): return False
-    
-        return True
+        expression+=" and "
+
+        op2_exp = boolean_type_checker(x[4], mode, expression)
+        if(op2_exp == False): return False
+        else: 
+            expression = op2_exp[1]
+            expression += op2_exp[0]
+
+        if mode == 0: expression+=")"
+        return(expression)
     except:
         pass
 
     return False
 
-# Boolean Operations
-def is_or(line, mode):
+def is_or(line, mode, expression):
     try:
         x = re.match(RE_OR, line).groups()
         dataset.append(["Or Operator", x[1]])
-        if(boolean_type_checker(x[2], 0) == False): return False
+
+        expression += "("
+        op1_exp = boolean_type_checker(x[2], 0, expression)
+        if(op1_exp == False): return False
+        else:
+            expression = op1_exp[1] 
+            expression += op1_exp[0]
+
         dataset.append(["Or Connector", x[3]])
-        if(boolean_type_checker(x[4], mode) == False): return False
+        expression+=" or "
+
+        op2_exp = boolean_type_checker(x[4], mode, expression)
+        if(op2_exp == False): return False
+        else: 
+            expression = op2_exp[1]
+            expression += op2_exp[0]
+
+        if mode == 0: expression+=")"
     
-        return True
+        return(expression)
     except:
         pass
 
     return False
 
-# Boolean Operations
-def is_xor(line, mode):
+def is_xor(line, mode, expression):
     try:
         x = re.match(RE_XOR, line).groups()
         dataset.append(["Xor Operator", x[1]])
-        if(boolean_type_checker(x[2], 0) == False): return False
+
+        expression += "("
+        op1_exp = boolean_type_checker(x[2], 0, expression)
+        if(op1_exp == False): return False
+        else:
+            expression = op1_exp[1] 
+            expression += op1_exp[0]
+
         dataset.append(["Xor Connector", x[3]])
-        if(boolean_type_checker(x[4], mode) == False): return False
+        expression+=" ^ "
+
+        op2_exp = boolean_type_checker(x[4], mode, expression)
+        if(op2_exp == False): return False
+        else: 
+            expression = op2_exp[1]
+            expression += op2_exp[0]
+
+        if mode == 0: expression+=")"
     
-        return True
+        return(expression)
     except:
         pass
 
     return False
 
-# Boolean Operations
-def is_not(line, mode):
+def is_not(line, mode, expression):
     try:
         x = re.match(RE_NOT, line).groups()
         dataset.append(["Not Operator", x[1]])
-        if(boolean_type_checker(x[2], mode) == False): return False
+        expression += "("
+        op1_exp = boolean_type_checker(x[2], 0, expression)
+        if(op1_exp == False): return False
+        else:
+            expression = op1_exp[1]
+            expression += "not " + op1_exp[0]
 
-        return True
+        if mode == 0: expression+=")"
+    
+        return(expression)
     except:
         pass
 
     return False
 
-def is_infinite_and(line):
+def is_infinite_and(line, expression):
     try:
         x = re.match(RE_INFINITE_AND, line).groups()
         dataset.append(["Infinite And Operator", x[1]])
-        if(boolean_type_checker(x[2], "And") == False): return False
+        op1_exp = boolean_type_checker(x[2], "And", expression)
+        if(op1_exp == False): return False
+        else:
+            expression = op1_exp[1]
+            expression += op1_exp[0]
 
-        return True
+        return(expression)
     except:
         pass
 
     return False
 
-def is_infinite_or(line):
+def is_infinite_or(line, expression):
     try:
         x = re.match(RE_INFINITE_OR, line).groups()
-        dataset.append(["Infinite Or Operator", x[1]])
-        if(boolean_type_checker(x[2], "Or") == False): return False
+        dataset.append(["Infinite And Operator", x[1]])
+        op1_exp = boolean_type_checker(x[2], "Or", expression)
+        if(op1_exp == False): return False
+        else:
+            expression = op1_exp[1]
+            expression += op1_exp[0]
 
-        return True
+        return(expression)
     except:
         pass
 
     return False
 
 # fxn to check and handle arguments/operands of boolean operations
-def boolean_type_checker(line, mode):
+def boolean_type_checker(line, mode, expression):
     # Check if line/string is either a troof literal or variable
     if re.match(R_TROOF, line):
         dataset.append(["TROOF Literal", line])
-        return True
+        return([str(line), expression])
 
     if re.match(R_VARIABLE, line):
         dataset.append(["Variable Identifier", line])
-        return True
+        return([str(line), expression])
+
+    if re.match(RE_INFBOOL_DELIMITER, line):
+        dataset.append([mode+"Delimiter", line])
+        return([str(line), expression])
+
+    # To handle last 2 strings (literal/variable and delimiter)
+    end_strings = line.split(" ")
+    if len(end_strings) == 2:
+        if re.match(R_TROOF, end_strings[0]):
+            dataset.append(["TROOF Literal", end_strings[0]])
+        if re.match(RE_INFBOOL_DELIMITER, end_strings[1]):
+            dataset.append(["Infinite "+mode+" Delimiter", end_strings[1]])
+        
+        return([str(end_strings[0])+")", expression])
 
     elif(mode == 0): return False       # Mode 0 expects 1 troof literal only, otherwise it's an error
-
+    
     # Check if line/string is a boolean operation and will recall the fxn to handle them
-    if is_and(line, mode): return
-    if is_or(line, mode): return
-    if is_xor(line, mode): return
-    if is_not(line, mode): return
+    anded = is_and(line, mode, expression)
+    if anded != False: return(["", anded])
+    ored = is_or(line, mode, expression)
+    if ored != False: return(["", ored])
+    xored = is_xor(line, mode, expression)
+    if xored != False: return(["", xored])
+    noted = is_not(line, mode, expression)
+    if noted != False: return(["", noted])
+
 
     # To handle the AN connector for infinite arity
     try:
         x=re.match(RE_INFBOOL_CONNECTOR, line).groups()
-        boolean_type_checker(x[0], 0)
-        dataset.append([mode+" Connector", x[1]])
-        boolean_type_checker(x[2], mode)
-        return
+        op1_exp = boolean_type_checker(x[0], 0, expression)
+        if(op1_exp == False): return False
+        else:
+            dataset.append([mode+" Connector", x[1]])
+            expression = op1_exp[1]
+            expression += op1_exp[0] + ") " + mode.lower() + " "
+            op2_exp = boolean_type_checker(x[2], mode, expression)
+            if(op2_exp == False): return False
+            else:
+                expression = op2_exp[1]
+                expression += op2_exp[0]
+                return(["", expression])
     
     except:
         pass
@@ -538,3 +536,53 @@ def is_assign(line):
         pass
 
     return False
+
+# fxn that checks if the line is an expression and returns the evaluated result
+def is_expression(line):
+    add = is_addition(line, "")
+    if add: return eval(add)
+    diff = is_subtraction(line, "")
+    if diff: return eval(diff)
+    prod = is_multiplication(line, "")
+    if prod: return eval(prod)
+    quot = is_division(line, "")
+    if quot: return eval(quot)
+
+    anded = is_and(line, 0, "")
+    if anded:
+        anded = process_bool(anded)
+        return eval(anded)
+
+    ored = is_or(line, 0, "")
+    if ored:
+        ored = process_bool(ored)
+        return eval(ored)
+
+    xored = is_xor(line, 0, "")
+    if xored:
+        xored = process_bool(xored)
+        return eval(xored)
+
+    noted = is_not(line, 0, "")
+    if noted:
+        noted = process_bool(noted)
+        return eval(noted)
+
+    infanded = is_infinite_and(line, "")
+    if infanded:
+        infanded = process_bool(infanded)
+        return eval(infanded)
+
+    infored = is_infinite_or(line, "")
+    if infored:
+        infored = process_bool(infored)
+        return eval(infored)
+
+    return None
+
+# Tool fxn to process 
+def process_bool(line):
+    line = line.replace("WIN", "True")
+    line = line.replace("FAIL", "False")
+
+    return(line)

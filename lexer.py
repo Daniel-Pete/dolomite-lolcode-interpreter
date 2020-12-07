@@ -1,5 +1,5 @@
 from checker import *
-file = "data/sample.txt"
+file = "data/sample.lol"
 
 def tokenize(fn):
 
@@ -15,32 +15,26 @@ def tokenize(fn):
 
         line = line.strip("\n")
 
-        if is_var_assign(line): continue
-        if is_var_declare(line): continue
+        # if is_var_assign(line): continue
+        # if is_var_declare(line): continue
         if is_code_delimiter(line): continue
-        if is_print(line): continue
-        if is_input(line): continue
-        if is_comment(line): continue
-        if is_if_then(line): continue
-        if is_end_if(line): continue
-        if is_if(line): continue
-        if is_else(line): continue
-        if is_switch(line): continue
-        if is_case(line): continue
-        if is_end_case(line): continue
+        # if is_print(line): continue
+        # if is_input(line): continue
+        # if is_comment(line): continue
+        # if is_if_then(line): continue
+        # if is_end_if(line): continue
+        # if is_if(line): continue
+        # if is_else(line): continue
+        # if is_switch(line): continue
+        # if is_case(line): continue
+        # if is_end_case(line): continue
         if is_equal_comparison(line): continue
         if is_notequal_comparison(line): continue
-        if is_addition(line): continue
-        if is_subtraction(line): continue
-        if is_multiplication(line): continue
-        if is_division(line): continue
-        if is_max(line): continue
-        if is_min(line): continue
-        if is_and(line, 0): continue
-        if is_or(line, 0): continue
-        if is_xor(line, 0): continue
-        if is_not(line, 0): continue
-        if is_infinite_and(line): continue
+        # Checks if the line is an expression(arithmetic/boolean/comparison operation)
+        exp = is_expression(line)
+        if exp != None:
+            print(exp)
+            continue
         if is_assign(line): continue
         
         else:

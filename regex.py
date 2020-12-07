@@ -46,6 +46,7 @@ RE_NOT = "(\s*)(NOT) (.*)"
 RE_INFINITE_AND = "(\s*)(ALL OF) (.*)"
 RE_INFINITE_OR = "(\s*)(ANY OF) (.*)"
 RE_INFBOOL_CONNECTOR = "([^ ]*) (AN) (.*)"
+RE_INFBOOL_DELIMITER = "^MKAY$"
 
 #Assignment Operation
 RE_ASSIGN = "(\s*)([^ ]*) (R) (.*)"
