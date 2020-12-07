@@ -12,14 +12,12 @@ ERROR = SYNTAX_ERROR
 tokens = []
 variables = {}
 
-
 def is_empty(line):
 
     if re.match(R_EMPTY, line):
         return True
 
     return False
-
 
 def is_var_initialize(line):
 
@@ -46,15 +44,14 @@ def is_var_initialize(line):
             # another variable, it must first
             # check if the other variable exists.
 
-            try:
-                if variables.__contains__(match[4]):
-                    
-                    variables[str(match[2])] = variables[match[4]]
-                    return True
-            except:
-                return False
+            if variables.__contains__(match[4]):
+                
+                variables[str(match[2])] = variables[match[4]]
+                return True
 
-        elif re.match(R_STR, match[4]):
+            return False
+
+        elif re.match(R_STR, str(match[4])):
 
             # If the variable matches a string
             # the string is stripped of its
@@ -64,9 +61,11 @@ def is_var_initialize(line):
             tokens.append([STR_LIT, new])
 
         elif re.match(R_NUMBAR, match[4]):
+
             tokens.append([NBR_LIT, match[4]])
 
         elif re.match(R_NUMBR, match[4]):
+
             tokens.append([NBAR_LIT, match[4]])
 
         variables[str(match[2])] = match[4]
@@ -99,9 +98,7 @@ def is_var_declare(line):
         return True
 
     except:
-
         pass
-
     return False
 
 def is_var_assign(line):
@@ -133,7 +130,7 @@ def is_hai(line):
 
     # Checks if the
     # line is either HAI
-    # or KTHmatchBYE
+    # or KTHXBYE
 
     if re.match(R_HAI, line):
         tokens.append([COD_DEL, line])
@@ -149,48 +146,6 @@ def is_bye(line):
 
     return False
 
-
-
-def is_print(line):
-
-    # Checks if the line
-    # is for printing
-    global ERROR
-
-    try:
-
-        match = re.match(R_VISI, line).groups()
-        tokens.append([PRINT_ID, match[1]])
-        tokens.append([VAR_IDENT, match[2]])
-
-        if variables.__contains__(match[2]):
-
-            if variables[match[2]] == None:
-                ERROR = VAR_ERROR
-                return False
-            else:
-                print(variables[match[2]].strip('"'))
-        
-        elif (re.match(R_NUMBR, match[2]) or 
-            re.match(R_NUMBAR, match[2])):
-
-            print(match[2])
-
-        elif re.match(R_STR, match[2]):
-            string = match[2].strip('"')
-            print(string)
-
-        else:
-            ERROR = VAR_ERROR
-            return False
-
-            
-        return True
-
-    except:
-        pass
-
-    return False
 
 
 def is_input(line):
@@ -393,11 +348,71 @@ def is_end_multicomment(line):
 
 def is_documentation(line):
 
-    # All lines after OBTW
-    # will be ignored 
+    # All lines after 
+    # OBTW will be ignored 
 
     tokens.append([DOC_ID, line])
     return True
+
+
+def concatenation(match):
+
+    ints = re.findall(R_NUMBR, match)
+    floats = re.findall(R_NUMBAR, match)
+    strings = re.findall(R_STR, match)
+    strings = [i.strip('"\'') for i in strings]
+
+    # If there are string quotes, then it
+    # will be split using '"'. Otherwise, it will
+    # be split with space.
+
+    if '"' in match:
+        to_concat = [str(i).strip() for i in match.split('"') if i != '']
+    else:
+        to_concat = [str(i).strip() for i in match.split() if i != '']
+
+    for i, j in enumerate(to_concat):
+
+        if j not in strings:
+
+            # There are cases wherein
+            # the variables are joined
+            # in a single string.
+            # This code block addresses this problem
+
+            x = j.split()
+            x = x[::-1]
+            to_concat.pop(i)
+
+            for elem in x:
+                to_concat.insert(i, elem)
+
+    concat = []
+
+    for i in to_concat:
+
+        if variables.__contains__(i):
+
+            # If the value is a variable
+            # then it's type will be first
+            # checked. If it's none, then it will
+            # error.
+
+            if variables[i] != None:
+                concat.append(variables[i])
+            else:
+                return
+
+        elif (i in strings or
+                i in ints or
+                i in floats):
+            concat.append(i)
+
+        else:
+            return 
+
+    return concat
+
 
 
 def is_smoosh(line):
@@ -409,64 +424,40 @@ def is_smoosh(line):
 
         # Find all the matches inside the string.
 
-        ints = re.findall(R_NUMBR, match[2])
-        floats = re.findall(R_NUMBAR, match[2])
-        strings = re.findall(R_STR, match[2])
-        strings = [i.strip('"\'') for i in strings]
+        concat = concatenation(match[2])
 
-        # If there are string quotes, then it
-        # will be split using '"'. Otherwise, it will
-        # be split with space.
+        if concat:
+            variables["IT"] = ''.join(concat)
+            return True
 
-
-        if '"' in match[2]:
-            to_concat = [str(i).strip() for i in match[2].split('"') if i != '']   
         else:
-            to_concat = [str(i).strip() for i in match[2].split() if i != ''] 
+            return False
 
-        
-        for i, j in enumerate(to_concat):
+    except:
+        pass
 
-            if j not in strings:
+    return False
 
-                # There are cases wherein
-                # the variables are joined
-                # in a single string.
-                # This code block addresses this problem
 
-                x = j.split()
-                x = x[::-1]
-                to_concat.pop(i)
+def is_print(line):
 
-                for elem in x:
-                    to_concat.insert(i, elem)
-                
-        concat = []
+    # Checks if the line
+    # is for printing
+    global ERROR
 
-        for i in to_concat:
-            if variables.__contains__(i):
+    try:
 
-                # If the value is a variable
-                # then it's type will be first 
-                # checked. If it's none, then it will
-                # error.
+        match = re.match(R_VISI, line).groups()
+        tokens.append([PRINT_ID, match[1]])
 
-                if variables[i] != None:
-                    concat.append(variables[i])
-                else: return False
+        concat = concatenation(match[2])
 
-            elif (i in strings or 
-                  i in ints or 
-                  i in floats):
-                concat.append(i)
+        if concat:
+            print(''.join(concat))
+            return True
 
-            else:
-                return False
-
-        print(''.join(concat))
-
-        
-        return True
+        else:
+            return False
 
     except:
         pass

@@ -7,8 +7,7 @@ from printer import *
 file = "../data/sample.lol"
 # file = sys.argv[1]
 
-
-global TOGGLE 
+global TOGGLE
 TOGGLE = "START"
 
 
@@ -59,7 +58,6 @@ def comment_grammar(line):
     if is_end_multicomment(line):
         TOGGLE = "STATEMENT"
         return True
-        
     elif is_documentation(line): 
         return True
 
@@ -76,6 +74,8 @@ def if_then_grammar(line):
     elif is_end_if(line):
         TOGGLE = "STATEMENT"
         return True
+        
+    return False
 
 def empty(line):
 
@@ -92,8 +92,6 @@ def tokenize(fn):
         print("File Error: file named", fn,"cannot be found")
         return
 
-    
-
     for num, line in enumerate(f):
 
         # Each line in the file is checked for a match
@@ -106,7 +104,6 @@ def tokenize(fn):
 
         if empty(line):
             continue
-        
         elif TOGGLE == "START":
 
             if start_grammar(line):
@@ -132,30 +129,25 @@ def tokenize(fn):
                 break
 
         elif TOGGLE == "IF-THEN":
-
             if if_then_grammar(line):
                 continue
             else:
-                show_error(fn, num, line)
-                break
-        
-        elif TOGGLE == "END":
-
-            if line:
                 show_error(fn, num, line)
                 break
 
         elif TOGGLE == "MULTICOMMENT" and is_bye(line):
             show_error(fn, num, line)
             break
-    
+
+        elif TOGGLE == "END":
+
+            if line:
+                show_error(fn, num, line)
+                break
 
 def main():
     tokenize(file)
-    
     # print_lexemes()
-    # print_vars()
-
-    
+    # print_vars()    
 
 main()

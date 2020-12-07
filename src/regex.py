@@ -15,12 +15,12 @@ R_NUMBAR = "-?[0-9]*\.[0-9]"
 R_VARIDENT = "([a-zA-Z]+[a-zA-Z0-9\_]*)"
 
 # Variable Declaration, Initialization, Assignment
-R_IHA = "(\s*)(I HAS A) ([a-zA-Z]+[a-zA-Z0-9\_]*)"
+R_IHA = "(\s*)(I HAS A) ([a-zA-Z]+[a-zA-Z0-9\_]*)(^\s*$)"
 R_IHAI = "(\s*)(I HAS A) ([a-zA-Z]+[a-zA-Z0-9\_]*) (ITZ) ([a-zA-Z]+[a-zA-Z0-9\_]*|-?[0-9]*\.[0-9]+|-?[0-9]+|\"[^\"]*\")"
 R_ASS = "(\s*)([a-zA-Z]+[a-zA-Z0-9\_]*) (R) (-?[0-9]*\.[0-9]+|-?[0-9]+|\"[^\"]*\")"
 
 # Input / Output
-R_VISI = "(\s*)(VISIBLE) (-?[0-9]*\.[0-9]+|-?[0-9]+|[a-zA-Z]+[a-zA-Z0-9\_]*|\"[^\"]*\")(\s*)"
+R_VISI = "(\s*)(VISIBLE) (.*)(\s*)"
 R_GIME = "(\s*)(GIMMEH) ([a-zA-Z]+[a-zA-Z0-9\_]*)(\s*)"
 
 # Documentation
@@ -35,7 +35,8 @@ R_YARLY = "(\s*)(YA RLY)(\s*)"
 R_NOWAI = "(\s*)(NO WAI)(\s*)"
 R_OIC = "(\s*)(OIC)(\s*)"
 
-# Switch-Case Statements
+# Switch-Case Statements 
+
 R_WTF = "(\s*)(WTF\?)(\s*)"
 R_OMG = "(\s*)(OMG) (-?[0-9]+)"
 R_OMGWTF = "(\s*)(OMGWTF)(\s*)"
@@ -45,13 +46,8 @@ R_LOOP = "^[a-zA-Z]+[a-zA-Z0-9\_]*$"
 R_EMPTY = "(^\s*$)"
 R_SMOOSH = "(\s*)(SMOOSH) (.*)"
 
-R_SMOOSH_HELP = r'(?:[^\s,"]|"(?:\\.|[^"])*")+' 
-# Taken From:
-# https://stackoverflow.com/questions/16710076/python-split-a-string-respect-and-preserve-quotes/16710842
-
 
 # Classification
-
 VAR_DEC = "Variable Declaration"
 VAR_IDENT = "Variable Identifier"
 VAR_ASS = "Variable Assignment"
@@ -74,7 +70,6 @@ CAT_OP = "Concatenation Keyword"
 
 
 # Error Messages
-
 SYNTAX_ERROR = "Syntax Error."
 VAR_ERROR = "Undefined Error."
 FILE_ERROR = "File Error: file cannot be found"
