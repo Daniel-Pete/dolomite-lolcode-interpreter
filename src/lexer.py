@@ -131,7 +131,7 @@ def tokenize(fn):
         elif TOGGLE == "IF-THEN":
             if if_then_grammar(line):
                 continue
-            else:''
+            else:
                 show_error(fn, num, line)
                 return
 
