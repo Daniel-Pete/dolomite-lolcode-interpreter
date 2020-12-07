@@ -4,7 +4,7 @@
 
 from printer import *
 
-file = "../data/sample.lol"
+file = "lolcode/sample.lol"
 # file = sys.argv[1]
 
 global TOGGLE
@@ -103,7 +103,7 @@ def tokenize(fn):
 
         if empty(line):
             continue
-        
+
         elif TOGGLE == "START":
 
             if start_grammar(line):
