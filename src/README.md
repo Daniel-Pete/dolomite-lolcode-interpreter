@@ -18,7 +18,7 @@ In order to build the analyser using the terminal, you must first clone the repo
 Once you have downloaded the repository, navigate into the src directory:
 
 <code>
-cd CMSC124-Project <br/>
+cd CMSC124-Project <br>
 cd src
 </code>
 
