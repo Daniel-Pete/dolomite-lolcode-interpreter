@@ -75,40 +75,73 @@ def is_code_delimiter(line):
 
     return False
 
-def is_equal_comparison(line):
+def is_equal_comparison(line, expression):
     try:
         category = ""
-
         x = re.match(RE_EQUAL_Comparison, line).groups()
+
+        expression += "("
         if(is_min_or_max(x[2]) != False):
             category = is_min_or_max(x[2])
-        
-        tokens.append([category+"Eq Comparison Operator", x[1]])
-        if(arithmetic_type_checker(x[2]) == False): return False
-        tokens.append([category+"Eq Comparison Connector", x[3]])
-        if(arithmetic_type_checker(x[4]) == False): return False
 
-        return True
+        tokens.append([category+"Eq Comparison Operator", x[1]])
+
+        op1_exp = arithmetic_type_checker(x[2], expression)
+        if(op1_exp == False): return False
+        else:
+            expression = op1_exp[1]
+            expression += op1_exp[0]
+
+        tokens.append(["Eq Comparison Connector", x[3]])
+        expression+=" == "
+
+        op2_exp = arithmetic_type_checker(x[4], expression)
+        if(op2_exp == False): return False
+        else: 
+            expression = op2_exp[1]
+            expression += op2_exp[0]
+
+        expression+=")"
+    
+        return(expression)
     except:
         pass
-    
+
     return False
 
-def is_notequal_comparison(line):
+def is_notequal_comparison(line, expression):
     try:
         category = ""
-
         x = re.match(RE_NOTEQUAL_Comparison, line).groups()
+
+        expression += "("
         if(is_min_or_max(x[2]) != False):
             category = is_min_or_max(x[2])
-        
+            
         if category == "": category = "NE"
-        tokens.append([category+" Comparison Operator", x[1]])
-        if(arithmetic_type_checker(x[2]) == False): return False
-        tokens.append([category+" Comparison Connector", x[3]])
-        if(arithmetic_type_checker(x[4]) == False): return False
+        elif category == "LT": category = "GT"
+        elif category == "GT": category = "LT"
 
-        return True
+        tokens.append([category+" Comparison Operator", x[1]])
+
+        op1_exp = arithmetic_type_checker(x[2], expression)
+        if(op1_exp == False): return False
+        else:
+            expression = op1_exp[1]
+            expression += op1_exp[0]
+
+        tokens.append([category+" Comparison Connector", x[3]])
+        expression+=" != "
+
+        op2_exp = arithmetic_type_checker(x[4], expression)
+        if(op2_exp == False): return False
+        else: 
+            expression = op2_exp[1]
+            expression += op2_exp[0]
+
+        expression+=")"
+    
+        return(expression)
     except:
         pass
 
@@ -236,29 +269,59 @@ def is_division(line, expression):
 
     return False
 
-def is_max(line):
+def is_max(line, expression):
     try:
         x = re.match(RE_MAX, line).groups()
         tokens.append(["Max Operator", x[1]])
-        if(arithmetic_type_checker(x[2]) == False): return False
+
+        expression += "("
+        op1_exp = arithmetic_type_checker(x[2], expression)
+        if(op1_exp == False): return False
+        else:
+            expression = op1_exp[1]
+            expression += "max("+op1_exp[0]
+
         tokens.append(["Max Connector", x[3]])
-        if(arithmetic_type_checker(x[4]) == False): return False
+        expression+=","
+
+        op2_exp = arithmetic_type_checker(x[4], expression)
+        if(op2_exp == False): return False
+        else: 
+            expression = op2_exp[1]
+            expression += op2_exp[0]+")"
+
+        expression+=")"
     
-        return True
+        return(expression)
     except:
         pass
 
     return False
 
-def is_min(line):
+def is_min(line, expression):
     try:
         x = re.match(RE_MIN, line).groups()
         tokens.append(["Min Operator", x[1]])
-        if(arithmetic_type_checker(x[2]) == False): return False
+
+        expression += "("
+        op1_exp = arithmetic_type_checker(x[2], expression)
+        if(op1_exp == False): return False
+        else:
+            expression = op1_exp[1]
+            expression += "min("+op1_exp[0]
+
         tokens.append(["Min Connector", x[3]])
-        if(arithmetic_type_checker(x[4]) == False): return False
-    
-        return True
+        expression+=","
+
+        op2_exp = arithmetic_type_checker(x[4], expression)
+        if(op2_exp == False): return False
+        else: 
+            expression = op2_exp[1]
+            expression += op2_exp[0]+")"
+
+        expression+=")"
+
+        return(expression)
     except:
         pass
 
@@ -275,6 +338,14 @@ def arithmetic_type_checker(line, expression):
     if prod != False: return(["",prod])
     quot = is_division(line, expression)
     if quot != False: return(["",quot])
+    maxed = is_max(line, expression)
+    if maxed != False: return(["", maxed])
+    mined = is_min(line, expression)
+    if mined != False: return(["", mined])
+    equaled = is_equal_comparison(line, expression)
+    if equaled != False: return(["", equaled])
+    notequaled = is_notequal_comparison(line, expression)
+    if notequaled != False: return(["", notequaled]) 
     
     # line/string is either a literal or variable
     if re.match(R_STR, line):
@@ -555,6 +626,14 @@ def is_expression(line):
     if prod: return eval(prod)
     quot = is_division(line, "")
     if quot: return eval(quot)
+    maxed = is_max(line, "")
+    if maxed: return eval(maxed)
+    mined = is_min(line, "")
+    if mined: return eval(mined)
+    equal = is_equal_comparison(line, "")
+    if equal: return eval(equal)
+    notequal = is_notequal_comparison(line, "")
+    if notequal: return eval(notequal)
 
     anded = is_and(line, 0, "")
     if anded:

@@ -29,8 +29,8 @@ def tokenize(fn):
         # if is_switch(line): continue
         # if is_case(line): continue
         # if is_end_case(line): continue
-        if is_equal_comparison(line): continue
-        if is_notequal_comparison(line): continue
+        # if is_equal_comparison(line): continue
+        # if is_notequal_comparison(line, ""): continue
         # Checks if the line is an expression(arithmetic/boolean/comparison operation)
         exp = is_expression(line)
         if exp != None:

@@ -27,8 +27,8 @@ R_OMG = "(\s*)(OMG) (-?[0-9]*\.[0-9])"
 R_OMGWTF = "(\s*)(OMGWTF)"
 
 # Comparison Operations
-RE_EQUAL_Comparison = "(\s*)(BOTH SAEM) (.*) (AN) (.*)"
-RE_NOTEQUAL_Comparison = "(\s*)(DIFFRINT) (.*) (AN) (.*)"
+RE_EQUAL_Comparison = "(\s*)(BOTH SAEM) ([^AN]*) (AN) (.*)"
+RE_NOTEQUAL_Comparison = "(\s*)(DIFFRINT) ([^AN]*) (AN) (.*)"
 
 # Arithmetic Operations
 RE_ADDITION = "(\s*)(SUM OF) (.*) (AN) (.*)"
