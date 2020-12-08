@@ -24,6 +24,8 @@ def start_grammar(line):
 
 def statement_grammar(line):
 
+
+
     global TOGGLE
 
     if is_var_initialize(line): return True
@@ -50,6 +52,10 @@ def statement_grammar(line):
     elif is_if_then(line):
         TOGGLE = "IF-THEN"
         return True
+
+    elif is_expression(line) != None:
+        return True
+
     return False
 
 def comment_grammar(line):

@@ -12,6 +12,7 @@ R_KTB = "^(\s*)KTHXBYE(\s*)$"
 R_STR = "\"[^\"]*\""
 R_NUMBR = "-?[0-9]+"
 R_NUMBAR = "-?[0-9]*\.[0-9]"
+R_VARIABLE = "^[a-zA-Z]+[a-zA-Z0-9\_]*$"
 R_VARIDENT = "([a-zA-Z]+[a-zA-Z0-9\_]*)"
 
 # Variable Declaration, Initialization, Assignment
@@ -46,6 +47,29 @@ R_LOOP = "^[a-zA-Z]+[a-zA-Z0-9\_]*$"
 R_EMPTY = "(^\s*$)"
 R_SMOOSH = "(\s*)(SMOOSH) (.*)"
 
+
+# Comparison Operations
+RE_EQUAL_Comparison = "(\s*)(BOTH SAEM) ([^AN]*) (AN) (.*)"
+RE_NOTEQUAL_Comparison = "(\s*)(DIFFRINT) ([^AN]*) (AN) (.*)"
+
+# Arithmetic Operations
+RE_ADDITION = "(\s*)(SUM OF) (.*) (AN) (.*)"
+RE_SUBTRACTION = "(\s*)(DIFF OF) (.*) (AN) (.*)"
+RE_MULTIPLICATION = "(\s*)(PRODUKT OF) (.*) (AN) (.*)"
+RE_DIVISION = "(\s*)(QUOSHUNT OF) (.*) (AN) (.*)"
+RE_MODULO = "(\s*)(MOD OF) (.*) (AN) (.*)"
+RE_MAX = "(\s*)(BIGGR OF) (.*) (AN) (.*)"
+RE_MIN = "(\s*)(SMALLR OF) (.*) (AN) (.*)"
+
+# Boolean Operations
+RE_AND = "(\s*)(BOTH OF) ([^ ]*) (AN) (.*)"
+RE_OR = "(\s*)(EITHER OF) ([^ ]*) (AN) (.*)"
+RE_XOR = "(\s*)(WON OF) ([^ ]*) (AN) (.*)"
+RE_NOT = "(\s*)(NOT) (.*)"
+RE_INFINITE_AND = "(\s*)(ALL OF) (.*)"
+RE_INFINITE_OR = "(\s*)(ANY OF) (.*)"
+RE_INFBOOL_CONNECTOR = "([^ ]*) (AN) (.*)"
+RE_INFBOOL_DELIMITER = "^MKAY$"
 
 # Classification
 VAR_DEC = "Variable Declaration"
