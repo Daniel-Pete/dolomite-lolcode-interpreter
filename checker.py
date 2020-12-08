@@ -269,6 +269,35 @@ def is_division(line, expression):
 
     return False
 
+def is_modulo(line, expression):
+    try:
+        x = re.match(RE_MODULO, line).groups()
+        tokens.append(["Modulo Operator", x[1]])
+
+        expression += "("
+        op1_exp = arithmetic_type_checker(x[2], expression)
+        if(op1_exp == False): return False
+        else:
+            expression = op1_exp[1] 
+            expression += op1_exp[0]
+
+        tokens.append(["Modulo Connector", x[3]])
+        expression+="%"
+
+        op2_exp = arithmetic_type_checker(x[4], expression)
+        if(op2_exp == False): return False
+        else: 
+            expression = op2_exp[1]
+            expression += op2_exp[0]
+
+        expression+=")"
+    
+        return(expression)
+    except:
+        pass
+
+    return False
+
 def is_max(line, expression):
     try:
         x = re.match(RE_MAX, line).groups()
@@ -338,6 +367,8 @@ def arithmetic_type_checker(line, expression):
     if prod != False: return(["",prod])
     quot = is_division(line, expression)
     if quot != False: return(["",quot])
+    mod = is_modulo(line, expression)
+    if mod != False: return(["",mod])
     maxed = is_max(line, expression)
     if maxed != False: return(["", maxed])
     mined = is_min(line, expression)
@@ -626,6 +657,8 @@ def is_expression(line):
     if prod: return eval(prod)
     quot = is_division(line, "")
     if quot: return eval(quot)
+    moded = is_modulo(line, "")
+    if moded: return eval(moded)
     maxed = is_max(line, "")
     if maxed: return eval(maxed)
     mined = is_min(line, "")

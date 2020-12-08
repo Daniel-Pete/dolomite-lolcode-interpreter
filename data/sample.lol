@@ -1,7 +1,10 @@
 HAI
   I HAS A numvar ITZ 28
+  I HAS A sample ITZ 2
   I HAS A cakelie ITZ WIN
-  SUM OF SUM OF numvar AN 2 AN numvar
+  MOD OF numvar AN sample
+  SUM OF sample AN numvar
+  SUM OF SUM OF numvar AN sample AN numvar
   BIGGR OF 5 AN 3
   SMALLR OF 10 AN 9
   SUM OF SMALLR OF 15 AN 30 AN 5
