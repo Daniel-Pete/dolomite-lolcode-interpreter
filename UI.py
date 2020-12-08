@@ -1,38 +1,88 @@
 from tkinter import *
 from tkinter import ttk
 from tkinter import filedialog, simpledialog
+import lexer
+import copy
 
 
 root = Tk()
 root.title('CMSC 124 Project')
 root.geometry("1200x800")
 
+global filename
+filename = ""
+
 
 # open file dialog 
 def openFile():
-    filename = filedialog.askopenfilename(initialdir="/")
-    print(filename)
+    global filename
+    filename = filedialog.askopenfilename(initialdir="/dmagu", title = "Select a LOLcode file", filetypes = (("LOL files", "*.lol"), ("All files", "*.*")))
+    print(filename) 
 
+    
 # clear all text in text area
 def clear():
     textArea.delete(1.0, END)
 
 # save the text in the text area
 def saveText():
+    global filename
     input = textArea.get("1.0", END)
-    print(input)
+    with open("textArea.lol", "w") as wf:
+        wf.write(input)
+    filename = "textArea.lol"
 
 
 def getOutput():
-	outputText.config(state = NORMAL)
-	outputText.delete(1.0, END)
-	outputText.insert(END, textArea.get("1.0", END))
-	getInputFromUser()
-	outputText.config(state = DISABLED)
+    if filename: 
+        removeAll(lexemeTable)
+        removeAll(symbolTable)
 
-def getInputFromUser():
-	gimmeInput = simpledialog.askstring("GIMME INPUT", "Enter your input")
-	print(gimmeInput)
+    data = lexer.tokenize(filename)
+
+    
+    printLexeme(data[0])
+    printSymbols(data[1])
+
+    textOut = ""
+    for text in data[2]:
+        textOut += text + "\n"
+
+    outputText.config(state = NORMAL)
+    outputText.delete(1.0, END)
+    outputText.insert(END, textOut)
+    # getInputFromUser()
+    outputText.config(state = DISABLED)
+
+# def getInputFromUser():
+#     gimmeInput = simpledialog.askstring("GIMME INPUT", "Enter your input")
+#     print(gimmeInput)
+
+# Remove all records
+def removeAll(table):
+	for record in table.get_children():
+		table.delete(record)
+
+
+def printLexeme(lexemeData):
+
+    global lexemeCount
+    lexemeCount=0
+
+    for record in lexemeData:
+
+        lexemeTable.insert(parent='', index='end', iid=lexemeCount, text="", values=(record[0], record[1]), tags=('lexemes_bg'))
+        lexemeCount += 1
+
+
+def printSymbols(variables):
+    symCount=0
+
+    for key, value in variables.items():
+
+        symbolTable.insert(parent='', index='end', iid=symCount, text="", values=(key, value), tags=('symbol_bg',))
+        symCount += 1
+
 
 # frame for file button
 buttonFileFrame = Frame(root)
@@ -102,11 +152,11 @@ lexemeStyle.theme_use("default")
 # Configure our treeview colors
 
 lexemeStyle.configure("Treeview", 
-	background="#D3D3D3",
-	foreground="black",
-	rowheight=25,
-	fieldbackground="#D3D3D3"
-	)
+    background="#D3D3D3",
+    foreground="black",
+    rowheight=25,
+    fieldbackground="#D3D3D3"
+    )
 # # Change selected color
 # lexemeStyle.map('Treeview', 
 # 	background=[('selected', 'blue')])
@@ -120,7 +170,7 @@ lexemeScroll = Scrollbar(lexemeFrame)
 lexemeScroll.pack(side=RIGHT, fill=Y)
 
 # Create Treeview
-lexemeTable = ttk.Treeview(lexemeFrame, yscrollcommand=lexemeScroll.set, selectmode="extended")
+lexemeTable = ttk.Treeview(lexemeFrame, yscrollcommand=lexemeScroll.set)
 # Pack to the screen
 lexemeTable.pack()
 
@@ -141,49 +191,8 @@ lexemeTable.heading("#0", text="Lexemes", anchor=W)
 lexemeTable.heading("Lexemes", text="Lexemes", anchor=W)
 lexemeTable.heading("Classification", text="Classification", anchor=W)
 
-
-# Add Data
-lexemeData = [
-	["John", "Pepperoni"],
-	["Mary", "Cheese"],
-	["Tim", "Mushroom"],
-	["Erin", "Ham"],
-	["Bob", "Onion"],
-	["Steve", "Peppers"],
-    ["John", "Pepperoni"],
-	["Mary", "Cheese"],
-	["Tim", "Mushroom"],
-	["Erin", "Ham"],
-	["Bob", "Onion"],
-	["Steve", "Peppers"],
-    ["John", "Pepperoni"],
-	["Mary", "Cheese"],
-	["Tim", "Mushroom"],
-	["Erin", "Ham"],
-	["Bob", "Onion"],
-	["Steve", "Peppers"],
-    ["John", "Pepperoni"],
-	["Mary", "Cheese"],
-	["Tim", "Mushroom"],
-	["Erin", "Ham"],
-	["Bob", "Onion"],
-	["Steve", "Peppers"]
-]
-
 # Create white bg for the lexemes tree view
 lexemeTable.tag_configure('lexemes_bg', background="white")
-
-
-global lexemeCount
-lexemeCount=0
-
-
-for record in lexemeData:
-
-	lexemeTable.insert(parent='', index='end', iid=lexemeCount, text="", values=(record[0], record[1]), tags=('lexemes_bg',))
-	lexemeCount += 1
-
-
 
 
 symbolStyle = ttk.Style()
@@ -191,14 +200,14 @@ symbolStyle.theme_use("default")
 # Configure our treeview colors
 
 symbolStyle.configure("Treeview", 
-	background="#D3D3D3",
-	foreground="black",
-	rowheight=25,
-	fieldbackground="#D3D3D3"
-	)
+    background="#D3D3D3",
+    foreground="black",
+    rowheight=25,
+    fieldbackground="#D3D3D3"
+    )
 # Change selected color
 symbolStyle.map('Treeview', 
-	background=[('selected', 'blue')])
+    background=[('selected', 'blue')])
 
 # Create Treeview Frame
 symbolFrame = Frame(root)
@@ -209,7 +218,7 @@ symbolScroll = Scrollbar(symbolFrame)
 symbolScroll.pack(side=RIGHT, fill=Y)
 
 # Create Treeview
-symbolTable = ttk.Treeview(symbolFrame, yscrollcommand=symbolScroll.set, selectmode="extended")
+symbolTable = ttk.Treeview(symbolFrame, yscrollcommand=symbolScroll.set)
 # Pack to the screen
 symbolTable.pack()
 
@@ -231,46 +240,8 @@ symbolTable.heading("Identifier", text="Identifier", anchor=W)
 symbolTable.heading("Value", text="Value", anchor=W)
 
 
-# Add Data
-symbolData = [
-	["John", "Pepperoni"],
-	["Mary", "Cheese"],
-	["Tim", "Mushroom"],
-	["Erin", "Ham"],
-	["Bob", "Onion"],
-	["Steve", "Peppers"],
-    ["John", "Pepperoni"],
-	["Mary", "Cheese"],
-	["Tim", "Mushroom"],
-	["Erin", "Ham"],
-	["Bob", "Onion"],
-	["Steve", "Peppers"],
-    ["John", "Pepperoni"],
-	["Mary", "Cheese"],
-	["Tim", "Mushroom"],
-	["Erin", "Ham"],
-	["Bob", "Onion"],
-	["Steve", "Peppers"],
-    ["John", "Pepperoni"],
-	["Mary", "Cheese"],
-	["Tim", "Mushroom"],
-	["Erin", "Ham"],
-	["Bob", "Onion"],
-	["Steve", "Peppers"]
-]
-
 # Create white bg for symbol table
 symbolTable.tag_configure('symbol_bg', background="white")
-
-
-global symCount
-symCount=0
-
-for record in symbolData:
-
-	symbolTable.insert(parent='', index='end', iid=symCount, text="", values=(record[0], record[1]), tags=('symbol_bg',))
-	symCount += 1
-
 
 symbolFrame.place(x = 1000, y = 50, anchor = N)
 lexemeFrame.place(x = 600, y = 50, anchor = N)
