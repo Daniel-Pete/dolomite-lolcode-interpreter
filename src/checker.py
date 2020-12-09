@@ -1,7 +1,3 @@
-# Branch David
-# Checker
-# Nov 13 2020
-
 import re
 from regex import *
 
@@ -38,10 +34,9 @@ def is_var_initialize(line):
         tokens.append([VAR_DEC, str(match[1])])
         tokens.append([VAR_IDENT, str(match[2])])
 
-        if match[3]: tokens.append([VAR_ASS, str(match[3])])
+        if match[3]: 
+            tokens.append([VAR_ASS, str(match[3])])
 
-
-        
         if re.match(R_WIN, str(match[4])):
             tokens.append([TROOF_LIT, match[4]])
             variables[str(match[2])] = str(match[4])
@@ -148,6 +143,7 @@ def is_hai(line):
 
     if re.match(R_HAI, line):
         tokens.append([COD_DEL, line])
+        variables["IT"] = None
         return True
 
     return False
@@ -169,6 +165,7 @@ def is_input(line):
 
     global ERROR
     try:
+
         match = re.match(R_GIME, line).groups()
         tokens.append([INPUT_ID, match[0]])
         tokens.append([VAR_IDENT, match[1]])
@@ -433,6 +430,7 @@ def concatenation(match):
                 i in floats or
                 i in wins or 
                 i in fails):
+
             concat.append(i)
 
         else:
@@ -498,8 +496,8 @@ def is_print(line):
 # Functions from Ged's Branch
 # Used for parsing expressions
 
-
 def is_equal_comparison(line, expression):
+
     try:
         category = ""
         x = re.match(RE_EQUAL_Comparison, line).groups()
@@ -509,7 +507,7 @@ def is_equal_comparison(line, expression):
         if(is_min_or_max(x[2]) != False):
             category = is_min_or_max(x[2])
 
-        tokens.append([category+"Eq Comparison Operator", x[1]])
+        tokens.append([category+EQ_OP, x[1]])
 
         op1_exp = arithmetic_type_checker(x[2], expression)
         if(op1_exp == False):
@@ -518,7 +516,7 @@ def is_equal_comparison(line, expression):
             expression = op1_exp[1]
             expression += op1_exp[0]
 
-        tokens.append(["Eq Comparison Connector", x[3]])
+        tokens.append([EQ_COM_CXT, x[3]])
         expression += " == "
 
         op2_exp = arithmetic_type_checker(x[4], expression)
@@ -538,7 +536,9 @@ def is_equal_comparison(line, expression):
 
 
 def is_notequal_comparison(line, expression):
+
     try:
+
         category = ""
         x = re.match(RE_NOTEQUAL_Comparison, line).groups()
 
@@ -553,7 +553,7 @@ def is_notequal_comparison(line, expression):
         elif category == "GT":
             category = "LT"
 
-        tokens.append([category+" Comparison Operator", x[1]])
+        tokens.append([category+COM_OP, x[1]])
 
         op1_exp = arithmetic_type_checker(x[2], expression)
         if(op1_exp == False):
@@ -562,7 +562,7 @@ def is_notequal_comparison(line, expression):
             expression = op1_exp[1]
             expression += op1_exp[0]
 
-        tokens.append([category+" Comparison Connector", x[3]])
+        tokens.append([category+COM_CXT, x[3]])
         expression += " != "
 
         op2_exp = arithmetic_type_checker(x[4], expression)
@@ -575,6 +575,7 @@ def is_notequal_comparison(line, expression):
         expression += ")"
 
         return(expression)
+
     except:
         pass
 
@@ -582,6 +583,7 @@ def is_notequal_comparison(line, expression):
 
 
 def is_min_or_max(line):
+
     if re.match(RE_MAX, line):
         return "GT"
     elif re.match(RE_MIN, line):
@@ -591,9 +593,11 @@ def is_min_or_max(line):
 
 
 def is_addition(line, expression):
+
     try:
+
         x = re.match(RE_ADDITION, line).groups()
-        tokens.append(["Addition Operator", x[1]])
+        tokens.append([ADD_OP, x[1]])
 
         expression += "("
         op1_exp = arithmetic_type_checker(x[2], expression)
@@ -603,7 +607,7 @@ def is_addition(line, expression):
             expression = op1_exp[1]
             expression += op1_exp[0]
 
-        tokens.append(["Addition Connector", x[3]])
+        tokens.append([ADD_CXT, x[3]])
         expression += "+"
 
         op2_exp = arithmetic_type_checker(x[4], expression)
@@ -616,6 +620,7 @@ def is_addition(line, expression):
         expression += ")"
 
         return(expression)
+
     except:
         pass
 
@@ -623,10 +628,11 @@ def is_addition(line, expression):
 
 
 def is_subtraction(line, expression):
+
     try:
         
         x = re.match(RE_SUBTRACTION, line).groups()
-        tokens.append(["Subtraction Operator", x[1]])
+        tokens.append([SUB_OP, x[1]])
 
         expression += "("
         op1_exp = arithmetic_type_checker(x[2], expression)
@@ -636,7 +642,7 @@ def is_subtraction(line, expression):
             expression = op1_exp[1]
             expression += op1_exp[0]
 
-        tokens.append(["Subtraction Connector", x[3]])
+        tokens.append([SUB_CXT, x[3]])
         expression += "-"
 
         op2_exp = arithmetic_type_checker(x[4], expression)
@@ -649,16 +655,20 @@ def is_subtraction(line, expression):
         expression += ")"
 
         return(expression)
+
     except:
+
         pass
 
     return False
 
 
 def is_multiplication(line, expression):
+
     try:
+
         x = re.match(RE_MULTIPLICATION, line).groups()
-        tokens.append(["Multiplication Operator", x[1]])
+        tokens.append([MUL_OP, x[1]])
 
         expression += "("
         op1_exp = arithmetic_type_checker(x[2], expression)
@@ -668,12 +678,14 @@ def is_multiplication(line, expression):
             expression = op1_exp[1]
             expression += op1_exp[0]
 
-        tokens.append(["Multiplication Connector", x[3]])
+        tokens.append([MUL_CXT, x[3]])
         expression += "*"
 
         op2_exp = arithmetic_type_checker(x[4], expression)
+
         if(op2_exp == False):
             return False
+
         else:
             expression = op2_exp[1]
             expression += op2_exp[0]
@@ -688,9 +700,10 @@ def is_multiplication(line, expression):
 
 
 def is_division(line, expression):
+
     try:
         x = re.match(RE_DIVISION, line).groups()
-        tokens.append(["Division Operator", x[1]])
+        tokens.append([DIV_OP, x[1]])
 
         expression += "("
         op1_exp = arithmetic_type_checker(x[2], expression)
@@ -700,7 +713,7 @@ def is_division(line, expression):
             expression = op1_exp[1]
             expression += op1_exp[0]
 
-        tokens.append(["Division Connector", x[3]])
+        tokens.append([DIV_CXT, x[3]])
         expression += "/"
 
         op2_exp = arithmetic_type_checker(x[4], expression)
@@ -713,6 +726,7 @@ def is_division(line, expression):
         expression += ")"
 
         return(expression)
+
     except:
         pass
 
@@ -720,9 +734,11 @@ def is_division(line, expression):
 
 
 def is_max(line, expression):
+
     try:
+
         x = re.match(RE_MAX, line).groups()
-        tokens.append(["Max Operator", x[1]])
+        tokens.append([MAX_OP, x[1]])
 
         expression += "("
         op1_exp = arithmetic_type_checker(x[2], expression)
@@ -732,7 +748,7 @@ def is_max(line, expression):
             expression = op1_exp[1]
             expression += "max("+op1_exp[0]
 
-        tokens.append(["Max Connector", x[3]])
+        tokens.append([MAX_CXT, x[3]])
         expression += ","
 
         op2_exp = arithmetic_type_checker(x[4], expression)
@@ -754,7 +770,7 @@ def is_max(line, expression):
 def is_min(line, expression):
     try:
         x = re.match(RE_MIN, line).groups()
-        tokens.append(["Min Operator", x[1]])
+        tokens.append([MIN_OP, x[1]])
 
         expression += "("
         op1_exp = arithmetic_type_checker(x[2], expression)
@@ -764,12 +780,14 @@ def is_min(line, expression):
             expression = op1_exp[1]
             expression += "min("+op1_exp[0]
 
-        tokens.append(["Min Connector", x[3]])
+        tokens.append([MIN_CXT, x[3]])
         expression += ","
 
         op2_exp = arithmetic_type_checker(x[4], expression)
+
         if(op2_exp == False):
             return False
+
         else:
             expression = op2_exp[1]
             expression += op2_exp[0]+")"
@@ -782,34 +800,43 @@ def is_min(line, expression):
 
     return False
 
-# fxn to check and handle arguments/operands of arithmetic operations
+# fxn to check and handle arguments/operands
+# of arithmetic operations
 
 
 def arithmetic_type_checker(line, expression):
+
     # Check first if it's an arithmetic operation 
     # and will recall the fxn to handle them
 
     summ = is_addition(line, expression)
     if summ != False:
         return(["", summ])
+
     diff = is_subtraction(line, expression)
     if diff != False:
         return(["", diff])
+
     prod = is_multiplication(line, expression)
     if prod != False:
         return(["", prod])
+
     quot = is_division(line, expression)
     if quot != False:
         return(["", quot])
+
     maxed = is_max(line, expression)
     if maxed != False:
         return(["", maxed])
+
     mined = is_min(line, expression)
     if mined != False:
         return(["", mined])
+
     equaled = is_equal_comparison(line, expression)
     if equaled != False:
         return(["", equaled])
+
     notequaled = is_notequal_comparison(line, expression)
     if notequaled != False:
         return(["", notequaled])
@@ -833,7 +860,9 @@ def arithmetic_type_checker(line, expression):
             tokens.append([VAR_IDENT, line])
             return([str(variables[line]), expression])
 
-    # if no matches == invalid data type for arithmetic operations
+    # if no matches == invalid data type 
+    # for arithmetic operations
+
     else:
         return False
 
@@ -842,21 +871,23 @@ def arithmetic_type_checker(line, expression):
 
 def is_and(line, mode, expression):
     try:
+
         x = re.match(RE_AND, line).groups()
-        tokens.append(["And Operator", x[1]])
+        tokens.append([AND_OP, x[1]])
 
         expression += "("
         op1_exp = boolean_type_checker(x[2], 0, expression)
+
         if(op1_exp == False):
             return False
         else:
             expression = op1_exp[1]
             expression += op1_exp[0]
 
-        tokens.append(["And Connector", x[3]])
+        tokens.append([AND_CXT, x[3]])
         expression += " and "
-
         op2_exp = boolean_type_checker(x[4], mode, expression)
+
         if(op2_exp == False):
             return False
         else:
@@ -865,7 +896,9 @@ def is_and(line, mode, expression):
 
         if mode == 0:
             expression += ")"
+
         return(expression)
+
     except:
         pass
 
@@ -874,21 +907,23 @@ def is_and(line, mode, expression):
 
 def is_or(line, mode, expression):
     try:
+
         x = re.match(RE_OR, line).groups()
-        tokens.append(["Or Operator", x[1]])
+        tokens.append([OR_OP, x[1]])
 
         expression += "("
         op1_exp = boolean_type_checker(x[2], 0, expression)
+
         if(op1_exp == False):
             return False
         else:
             expression = op1_exp[1]
             expression += op1_exp[0]
 
-        tokens.append(["Or Connector", x[3]])
+        tokens.append([OR_CXT, x[3]])
         expression += " or "
-
         op2_exp = boolean_type_checker(x[4], mode, expression)
+
         if(op2_exp == False):
             return False
         else:
@@ -907,21 +942,23 @@ def is_or(line, mode, expression):
 
 def is_xor(line, mode, expression):
     try:
+
         x = re.match(RE_XOR, line).groups()
-        tokens.append(["Xor Operator", x[1]])
+        tokens.append([XOR_OP, x[1]])
 
         expression += "("
         op1_exp = boolean_type_checker(x[2], 0, expression)
+
         if(op1_exp == False):
             return False
         else:
             expression = op1_exp[1]
             expression += op1_exp[0]
 
-        tokens.append(["Xor Connector", x[3]])
+        tokens.append([XOR_CXT, x[3]])
         expression += " ^ "
-
         op2_exp = boolean_type_checker(x[4], mode, expression)
+
         if(op2_exp == False):
             return False
         else:
@@ -939,11 +976,14 @@ def is_xor(line, mode, expression):
 
 
 def is_not(line, mode, expression):
+
     try:
         x = re.match(RE_NOT, line).groups()
-        tokens.append(["Not Operator", x[1]])
+
+        tokens.append([NOT_OP, x[1]])
         expression += "("
         op1_exp = boolean_type_checker(x[2], 0, expression)
+
         if(op1_exp == False):
             return False
         else:
@@ -954,6 +994,7 @@ def is_not(line, mode, expression):
             expression += ")"
 
         return(expression)
+
     except:
         pass
 
@@ -963,7 +1004,7 @@ def is_not(line, mode, expression):
 def is_infinite_and(line, expression):
     try:
         x = re.match(RE_INFINITE_AND, line).groups()
-        tokens.append(["Infinite And Operator", x[1]])
+        tokens.append([INF_AND_OP, x[1]])
         op1_exp = boolean_type_checker(x[2], "And", expression)
         if(op1_exp == False):
             return False
@@ -981,7 +1022,7 @@ def is_infinite_and(line, expression):
 def is_infinite_or(line, expression):
     try:
         x = re.match(RE_INFINITE_OR, line).groups()
-        tokens.append(["Infinite And Operator", x[1]])
+        tokens.append([INF_AND_OP, x[1]])
         op1_exp = boolean_type_checker(x[2], "Or", expression)
         if(op1_exp == False):
             return False
@@ -999,9 +1040,12 @@ def is_infinite_or(line, expression):
 
 
 def boolean_type_checker(line, mode, expression):
-    # Check if line/string is either a troof literal or variable
+
+    # Check if line/string is either a 
+    # troof literal or variable
+
     if re.match(R_TROOF, line):
-        tokens.append(["TROOF Literal", line])
+        tokens.append([TROOF_LIT, line])
         return([str(line), expression])
 
     if re.match(R_VARIABLE, line):
@@ -1009,18 +1053,24 @@ def boolean_type_checker(line, mode, expression):
             tokens.append([VAR_IDENT, line])
             return([str(variables[line]), expression])
 
-    # To handle last 2 strings (literal/variable and delimiter)
+    # To handle last 2 strings 
+    # (literal/variable and delimiter)
+
     end_strings = line.split(" ")
 
     if len(end_strings) == 2:
+
         if re.match(R_TROOF, end_strings[0]):
-            tokens.append(["TROOF Literal", end_strings[0]])
+            tokens.append([TROOF_LIT, end_strings[0]])
             arg1 = str(end_strings[0])
+
         elif re.match(R_VARIABLE, end_strings[0]):
+
             # Check if variable exists in variables dictionary
             if variables.__contains__(end_strings[0]):
                 tokens.append([VAR_IDENT, end_strings[0]])
                 arg1 = str(variables[end_strings[0]])
+
             # Variable referenced does not exist
             else:
                 return False
@@ -1031,9 +1081,14 @@ def boolean_type_checker(line, mode, expression):
         return([arg1 + ")", expression])
 
     elif(mode == 0):
-        return False       # Mode 0 expects 1 troof literal only, otherwise it's an error
 
-    # Check if line/string is a boolean operation and will recall the fxn to handle them
+        # Mode 0 expects 1 troof literal only, 
+        # otherwise it's an error
+        return False       
+
+    # Check if line/string is a boolean operation and 
+    # will recall the fxn to handle them
+
     anded = is_and(line, mode, expression)
     if anded != False:
         return(["", anded])
@@ -1047,7 +1102,9 @@ def boolean_type_checker(line, mode, expression):
     if noted != False:
         return(["", noted])
 
-    # To handle the AN connector for infinite arity
+    # To handle the AN connector 
+    # for infinite arity
+
     try:
         x = re.match(RE_INFBOOL_CONNECTOR, line).groups()
         op1_exp = boolean_type_checker(x[0], 0, expression)
@@ -1071,7 +1128,8 @@ def boolean_type_checker(line, mode, expression):
     return False
 
 
-# fxn that checks if the line is an expression and returns the evaluated result
+# fxn that checks if the line is an 
+# expression and returns the evaluated result
 
 
 def is_expression(line):
@@ -1160,8 +1218,8 @@ def is_expression(line):
 
     return None
 
-# Tool fxn to process
-
+# Tool fxn 
+# to process
 
 def process_bool(line):
     line = line.replace("WIN", "True")

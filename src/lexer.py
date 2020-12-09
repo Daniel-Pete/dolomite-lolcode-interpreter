@@ -1,16 +1,11 @@
-# Branch David
-# Lexical Analyser
-# Nov 13 2020
-
 from printer import *
 
 file = "lolcode/sample.lol"
-# file = sys.argv[1]
 
 global TOGGLE, SUBTOGGLE, CONTROL_FLAG
 
-TOGGLE = "START"
-SUBTOGGLE = "START"
+TOGGLE = START
+SUBTOGGLE = START
 CONTROL_FLAG = None
 
 
@@ -21,12 +16,13 @@ def empty(line):
 
 
 def start_grammar(line):
-    global TOGGLE
+    global TOGGLE, SUBTOGGLE
 
     if is_hai(line):
-        TOGGLE = "STATEMENT"
-        SUBTOGGLE = "STATEMENT"
+        TOGGLE = STATEMENT
+        SUBTOGGLE = STATEMENT
         return True
+
     elif is_comment(line):
         return True
 
@@ -53,7 +49,7 @@ def is_statement(line):
 
     elif (is_multicomment_a(line) or
           is_multicomment_b(line)):
-        TOGGLE = "MULTICOMMENT"
+        
         return True
 
     elif is_expression(line) != None:
@@ -73,12 +69,12 @@ def statement_grammar(line):
         return True
 
     elif is_bye(line):
-        TOGGLE = "END"
+        TOGGLE = END
         return True
 
     elif is_if_then(line):
-        TOGGLE = "IF"
-        SUBTOGGLE = "IF"
+        TOGGLE = IF
+        SUBTOGGLE = IF
         CONTROL_FLAG = eval(variables["IT"])
 
         return True
@@ -90,8 +86,10 @@ def comment_grammar(line):
     global TOGGLE
 
     if is_end_multicomment(line):
-        TOGGLE = "STATEMENT"
+
+        TOGGLE = STATEMENT
         return True
+
     elif is_documentation(line): 
         return True
 
@@ -107,16 +105,16 @@ def if_grammar(line):
         if is_end_if(line):
             return False
 
-        elif is_if(line) and SUBTOGGLE == "IF":
-            SUBTOGGLE = "STATEMENT"
+        elif is_if(line) and SUBTOGGLE == IF:
+            SUBTOGGLE = STATEMENT
             return True
 
-        elif is_statement(line) and SUBTOGGLE == "STATEMENT":
+        elif is_statement(line) and SUBTOGGLE == STATEMENT:
             return True
 
-        elif is_else(line) and SUBTOGGLE != "IF":
-            TOGGLE = "ELSE"
-            SUBTOGGLE = "SKIP"
+        elif is_else(line) and SUBTOGGLE != IF:
+            TOGGLE = ELSE
+            SUBTOGGLE = SKIP
             return True
         
 
@@ -125,16 +123,16 @@ def if_grammar(line):
         if is_end_if(line):
             return False
 
-        elif is_if(line) and SUBTOGGLE == "IF":
-            SUBTOGGLE = "SKIP"
+        elif is_if(line) and SUBTOGGLE == IF:
+            SUBTOGGLE = SKIP
             return True
 
-        elif is_else(line) and SUBTOGGLE != "IF":
-            TOGGLE = "ELSE"
-            SUBTOGGLE = "STATEMENT"
+        elif is_else(line) and SUBTOGGLE != IF:
+            TOGGLE = ELSE
+            SUBTOGGLE = STATEMENT
             return True
 
-        elif SUBTOGGLE == "SKIP":
+        elif SUBTOGGLE == SKIP:
             return True
     
 
@@ -149,23 +147,24 @@ def else_grammar(line):
 
     if CONTROL_FLAG == False:
 
-        if is_statement(line) and SUBTOGGLE == "STATEMENT":
+        if is_statement(line) and SUBTOGGLE == STATEMENT:
             return True
 
         elif is_end_if(line):
-            TOGGLE = "STATEMENT"
-            SUBTOGGLE = "START"
+            TOGGLE = STATEMENT
+            SUBTOGGLE = START
             return True
 
     elif CONTROL_FLAG == True:
 
         if is_end_if(line):
-            TOGGLE = "STATEMENT"
-            SUBTOGGLE = "START"
+            
+            TOGGLE = STATEMENT
+            SUBTOGGLE = START
             CONTROL_FLAG = None
             return True
 
-        elif SUBTOGGLE == "SKIP":
+        elif SUBTOGGLE == SKIP:
             return True
 
 
@@ -196,7 +195,7 @@ def tokenize(fn):
         if empty(line):
             continue
 
-        elif TOGGLE == "START":
+        elif TOGGLE == START:
 
             if start_grammar(line):
                 continue
@@ -204,7 +203,7 @@ def tokenize(fn):
                 show_error(fn, num, line)
                 return
 
-        elif TOGGLE == "STATEMENT":
+        elif TOGGLE == STATEMENT:
 
             if statement_grammar(line):
                 continue
@@ -212,7 +211,7 @@ def tokenize(fn):
                 show_error(fn, num, line)
                 return
         
-        elif TOGGLE == "MULTICOMMENT":
+        elif TOGGLE == MULTICOMMENT:
 
             if comment_grammar(line):
                 continue
@@ -220,14 +219,14 @@ def tokenize(fn):
                 show_error(fn, num, line)
                 return
 
-        elif TOGGLE == "IF":
+        elif TOGGLE == IF:
             if if_grammar(line):
                 continue
             else:
                 show_error(fn, num, line)
                 return
 
-        elif TOGGLE == "ELSE":
+        elif TOGGLE == ELSE:
 
             if else_grammar(line):
                 continue
@@ -235,11 +234,11 @@ def tokenize(fn):
                 show_error(fn, num, line)
                 return
 
-        elif TOGGLE == "MULTICOMMENT" and is_bye(line):
+        elif TOGGLE == MULTICOMMENT and is_bye(line):
             show_error(fn, num, line)
             return
 
-        elif TOGGLE == "END":
+        elif TOGGLE == END:
 
             if line:
                 show_error(fn, num, line)
@@ -248,7 +247,7 @@ def tokenize(fn):
     # If program ends without KTHXBYE
     # then it will be an error.
 
-    if TOGGLE != "END":
+    if TOGGLE != END:
         show_error(fn, num, line)
     
 
