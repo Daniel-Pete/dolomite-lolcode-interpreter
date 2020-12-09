@@ -1,3 +1,1 @@
-HAI
- VISIBLE "Hello"
-KTHXBYE
+

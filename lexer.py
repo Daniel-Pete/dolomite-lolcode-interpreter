@@ -86,7 +86,8 @@ def tokenize(fn):
     global TOGGLE
 
     # Reset lists and dictionary
-    if len(tokens) != 0 and len(variables) != 0:
+    print(len(tokens), len(variables))
+    if len(tokens) != 0 or len(variables) != 0:
         tokens.clear()
         variables.clear()
         terminalPrint.clear()

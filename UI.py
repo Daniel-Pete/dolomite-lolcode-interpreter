@@ -2,7 +2,8 @@ from tkinter import *
 from tkinter import ttk
 from tkinter import filedialog, simpledialog
 import lexer
-import copy
+import os
+
 
 
 root = Tk()
@@ -12,13 +13,17 @@ root.geometry("1200x800")
 global filename
 filename = ""
 
+global displayFilename
+displayFilename = "Selected File: None"
+
 
 # open file dialog 
 def openFile():
-    global filename
+    global filename, displayFilename
     filename = filedialog.askopenfilename(initialdir="/dmagu", title = "Select a LOLcode file", filetypes = (("LOL files", "*.lol"), ("All files", "*.*")))
-    print(filename) 
-
+    head, tail = os.path.split(filename)
+    displayFilename = "Selected File: " + tail
+    displayFile.config(text = displayFilename)
     
 # clear all text in text area
 def clear():
@@ -26,21 +31,24 @@ def clear():
 
 # save the text in the text area
 def saveText():
-    global filename
+    global filename, displayFilename
     input = textArea.get("1.0", END)
     with open("textArea.lol", "w") as wf:
         wf.write(input)
     filename = "textArea.lol"
+    displayFilename = "Selected File: " + filename
+    displayFile.config(text = displayFilename)
 
 
 def getOutput():
+    global filename
     if filename: 
         removeAll(lexemeTable)
         removeAll(symbolTable)
 
     data = lexer.tokenize(filename)
 
-    
+
     printLexeme(data[0])
     printSymbols(data[1])
 
@@ -96,10 +104,23 @@ textFileFrame.pack(pady=20)
 executeButtonFrame = Frame(root)
 executeButtonFrame.pack(pady=20)
 
+labelLexeme = Frame(root)
+labelLexeme.pack(pady = 20)
+
+labelSymbol = Frame(root)
+labelSymbol.pack(pady = 20)
 
 fileButton = Button(buttonFileFrame, text = "Select File", command = openFile, height = 1, width = 43)
 fileButton.pack()
 
+displayFile = Label(buttonFileFrame, text = displayFilename)
+displayFile.pack()
+
+lexemeLabel = Label(labelLexeme, text = 'Lexemes', font = ("Arial Bold", 20))
+lexemeLabel.pack()
+
+symbolLabel = Label(labelSymbol, text = 'Symbol Table', font = ("Arial Bold", 20))
+symbolLabel.pack()
 
 textScrollbar = Scrollbar(textFileFrame)
 textScrollbar.pack(side = RIGHT, fill = Y)
@@ -118,8 +139,10 @@ executeButton.pack()
 
 # window location of buttons and text area
 buttonFileFrame.place(x = 200, y = 10, anchor = N)
-textFileFrame.place(x = 200, y = 50, anchor = N)
+textFileFrame.place(x = 200, y = 70, anchor = N)
 executeButtonFrame.place(x = 600, y = 350, anchor = N)
+labelLexeme.place(x = 600, y = 10, anchor = N)
+labelSymbol.place(x = 1000, y = 10, anchor = N)
 
 
 outputFrame = Frame(root)
@@ -163,7 +186,7 @@ lexemeStyle.configure("Treeview",
 
 # Create Treeview Frame
 lexemeFrame = Frame(root)
-lexemeFrame.pack(pady=20)
+lexemeFrame.pack()
 
 # Treeview Scrollbar
 lexemeScroll = Scrollbar(lexemeFrame)
