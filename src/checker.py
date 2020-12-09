@@ -143,7 +143,7 @@ def is_hai(line):
 
     if re.match(R_HAI, line):
         tokens.append([COD_DEL, line])
-        variables["IT"] = None
+        variables[IT] = None
         return True
 
     return False
@@ -370,7 +370,7 @@ def concatenation(match):
 
 
     if is_expression(match):
-        print(variables["IT"])
+        print(variables[IT])
         return "EXPRESSION"
 
     floats = re.findall(R_NUMBAR, match)
@@ -452,7 +452,7 @@ def is_smoosh(line):
         concat = concatenation(match[2])
 
         if concat:
-            variables["IT"] = ''.join(concat)
+            variables[IT] = ''.join(concat)
             return True
 
         else:
@@ -906,6 +906,7 @@ def is_and(line, mode, expression):
 
 
 def is_or(line, mode, expression):
+
     try:
 
         x = re.match(RE_OR, line).groups()
@@ -941,6 +942,7 @@ def is_or(line, mode, expression):
 
 
 def is_xor(line, mode, expression):
+
     try:
 
         x = re.match(RE_XOR, line).groups()
@@ -969,6 +971,7 @@ def is_xor(line, mode, expression):
             expression += ")"
 
         return(expression)
+
     except:
         pass
 
@@ -978,6 +981,7 @@ def is_xor(line, mode, expression):
 def is_not(line, mode, expression):
 
     try:
+
         x = re.match(RE_NOT, line).groups()
 
         tokens.append([NOT_OP, x[1]])
@@ -1003,6 +1007,7 @@ def is_not(line, mode, expression):
 
 def is_infinite_and(line, expression):
     try:
+
         x = re.match(RE_INFINITE_AND, line).groups()
         tokens.append([INF_AND_OP, x[1]])
         op1_exp = boolean_type_checker(x[2], "And", expression)
@@ -1013,6 +1018,7 @@ def is_infinite_and(line, expression):
             expression += op1_exp[0]
 
         return(expression)
+        
     except:
         pass
 
@@ -1036,7 +1042,8 @@ def is_infinite_or(line, expression):
 
     return False
 
-# fxn to check and handle arguments/operands of boolean operations
+# fxn to check and handle arguments/operands 
+# of boolean operations
 
 
 def boolean_type_checker(line, mode, expression):
@@ -1066,7 +1073,9 @@ def boolean_type_checker(line, mode, expression):
 
         elif re.match(R_VARIABLE, end_strings[0]):
 
-            # Check if variable exists in variables dictionary
+            # Check if variable exists in 
+            # variables dictionary
+
             if variables.__contains__(end_strings[0]):
                 tokens.append([VAR_IDENT, end_strings[0]])
                 arg1 = str(variables[end_strings[0]])
@@ -1084,6 +1093,7 @@ def boolean_type_checker(line, mode, expression):
 
         # Mode 0 expects 1 troof literal only, 
         # otherwise it's an error
+
         return False       
 
     # Check if line/string is a boolean operation and 
@@ -1106,15 +1116,20 @@ def boolean_type_checker(line, mode, expression):
     # for infinite arity
 
     try:
+
         x = re.match(RE_INFBOOL_CONNECTOR, line).groups()
         op1_exp = boolean_type_checker(x[0], 0, expression)
+
         if(op1_exp == False):
             return False
+
         else:
+
             tokens.append([mode+" Connector", x[1]])
             expression = op1_exp[1]
             expression += op1_exp[0] + ") " + mode.lower() + " "
             op2_exp = boolean_type_checker(x[2], mode, expression)
+
             if(op2_exp == False):
                 return False
             else:
@@ -1131,90 +1146,83 @@ def boolean_type_checker(line, mode, expression):
 # fxn that checks if the line is an 
 # expression and returns the evaluated result
 
-
 def is_expression(line):
+
     add = is_addition(line, "")
     if add:
-        variables["IT"] = str(eval(add))
+        variables[IT] = str(eval(add))
         return True
 
     diff = is_subtraction(line, "")
     if diff:
-        variables["IT"] = str(eval(diff))
+        variables[IT] = str(eval(diff))
         return True
 
     prod = is_multiplication(line, "")
     if prod:
-        variables["IT"] = str(eval(prod))
+        variables[IT] = str(eval(prod))
         return True
 
     quot = is_division(line, "")
     if quot:
-        variables["IT"] = str(eval(quot))
+        variables[IT] = str(eval(quot))
         return True
 
     maxed = is_max(line, "")
     if maxed:
-        variables["IT"] = str(eval(maxed))
+        variables[IT] = str(eval(maxed))
         return True
 
     mined = is_min(line, "")
     if mined:
-        variables["IT"] = str(eval(mined))
+        variables[IT] = str(eval(mined))
         return True
 
     equal = is_equal_comparison(line, "")
     if equal:
-        variables["IT"] = str(eval(equal))
+        variables[IT] = str(eval(equal))
         return True
 
     notequal = is_notequal_comparison(line, "")
     if notequal:
-        variables["IT"] = str(eval(notequal))
+        variables[IT] = str(eval(notequal))
         return True
-
 
     anded = is_and(line, 0, "")
     if anded:
         anded = process_bool(anded)
-        variables["IT"] = str(eval(anded))
+        variables[IT] = str(eval(anded))
         return True
-
 
     ored = is_or(line, 0, "")
     if ored:
         ored = process_bool(ored)
-        variables["IT"] = str(eval(ored))
+        variables[IT] = str(eval(ored))
         return True
-
 
     xored = is_xor(line, 0, "")
     if xored:
         xored = process_bool(xored)
-        variables["IT"] = str(eval(xored))
+        variables[IT] = str(eval(xored))
         return True
-
 
     noted = is_not(line, 0, "")
     if noted:
         noted = process_bool(noted)
-        variables["IT"] = str(eval(noted))
+        variables[IT] = str(eval(noted))
         return True
-
 
     infanded = is_infinite_and(line, "")
     if infanded:
         infanded = process_bool(infanded)
-        variables["IT"] = str(eval(infanded))
+        variables[IT] = str(eval(infanded))
         return True
-
 
     infored = is_infinite_or(line, "")
     if infored:
         infored = process_bool(infored)
-        variables["IT"] = str(eval(infored))
+        variables[IT] = str(eval(infored))
         return True
-
 
     return None
 

@@ -8,12 +8,10 @@ TOGGLE = START
 SUBTOGGLE = START
 CONTROL_FLAG = None
 
-
 def empty(line):
 
     if is_empty(line):
         return True
-
 
 def start_grammar(line):
     global TOGGLE, SUBTOGGLE
@@ -75,7 +73,7 @@ def statement_grammar(line):
     elif is_if_then(line):
         TOGGLE = IF
         SUBTOGGLE = IF
-        CONTROL_FLAG = eval(variables["IT"])
+        CONTROL_FLAG = eval(variables[IT])
 
         return True
 
@@ -143,11 +141,10 @@ def else_grammar(line):
 
     global TOGGLE, SUBTOGGLE, CONTROL_FLAG
 
-    
-
     if CONTROL_FLAG == False:
 
-        if is_statement(line) and SUBTOGGLE == STATEMENT:
+        if (is_statement(line) and
+            SUBTOGGLE == STATEMENT):
             return True
 
         elif is_end_if(line):
@@ -158,7 +155,6 @@ def else_grammar(line):
     elif CONTROL_FLAG == True:
 
         if is_end_if(line):
-            
             TOGGLE = STATEMENT
             SUBTOGGLE = START
             CONTROL_FLAG = None
@@ -167,11 +163,8 @@ def else_grammar(line):
         elif SUBTOGGLE == SKIP:
             return True
 
-
-
     return False
-
-
+    
 
 def tokenize(fn):
 
@@ -179,8 +172,9 @@ def tokenize(fn):
 
     try:
         f = open(fn, "r")
+
     except:
-        print("File Error: file named", fn,"cannot be found")
+        print(FILE_ERROR)
         return
 
     for num, line in enumerate(f):
@@ -234,7 +228,9 @@ def tokenize(fn):
                 show_error(fn, num, line)
                 return
 
-        elif TOGGLE == MULTICOMMENT and is_bye(line):
+        elif (TOGGLE == MULTICOMMENT 
+            and is_bye(line)):
+
             show_error(fn, num, line)
             return
 

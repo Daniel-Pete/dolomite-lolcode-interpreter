@@ -125,7 +125,6 @@ VAR_ERROR = "Undefined Error."
 FILE_ERROR = "File Error: file cannot be found"
 
 # Toggles
-
 START = "START"
 STATEMENT = "STATEMENT"
 IF = "IF"
@@ -133,4 +132,4 @@ ELSE = "ELSE"
 END = "END"
 SKIP = "SKIP"
 MULTICOMMENT = "MULTICOMMENT"
-
+IT = "IT"

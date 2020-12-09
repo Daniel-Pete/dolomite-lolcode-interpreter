@@ -1,35 +1,33 @@
 HAI
   I HAS A a ITZ 12
   I HAS A b ITZ 5
-
   BOTH SAEM a AN b
 
-  O RLY?
-
-    YA RLY
-    
+  IT R 18
+  WTF?
+    OMG 1
+      VISIBLE "I'm the only oneeeee"
+      GTFO
+    OMG 3
+      VISIBLE "third time's a charm"
+    OMG 5
+      VISIBLE "no one wants a five"
+      GTFO
+    OMG 7
+      VISIBLE "why is six afraid of seven?"
+      VISIBLE "7 8 " 
+      VISIBLE SUM OF IT AN 2
+      GTFO
+    OMG 11
+      VISIBLE "Friends don't lie. -Eleven"
+      GTFO
+    OMG 13
+      VISIBLE "birthday ni taylor swift, dec 13"
+    OMG 17
+      VISIBLE "seventeen right here"
+    OMGWTF
+      VISIBLE "ano na"
       VISIBLE IT
-      VISIBLE "it is the same"
-      b R 17
-      SUM OF 5 AN 2
-      VISIBLE IT
-      VISIBLE b
-
-    NO WAI
-
-      VISIBLE IT
-      VISIBLE "it is not!"
-      b R 18
-      VISIBLE "b is "
-      VISIBLE b
-      DIFFRINT 5 AN 3
-      VISIBLE IT
-      VISIBLE b
-      b R 20
-      VISIBLE b
-
   OIC
-
-
 
 KTHXBYE
