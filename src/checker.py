@@ -8,15 +8,40 @@ ERROR = SYNTAX_ERROR
 tokens = []
 variables = {}
 
-WIN = True
-FAIL = False
-
 def is_empty(line):
 
     if re.match(R_EMPTY, line):
         return True
 
     return False
+
+def is_statement(line):
+
+    if is_var_initialize(line):
+        return True
+
+    elif is_var_declare(line):
+        return True
+
+    elif (is_var_assign(line) or
+          is_print(line) or
+          is_input(line) or
+          is_comment(line) or
+          is_smoosh(line) or
+          is_empty(line)):
+
+        return True
+
+    elif (is_multicomment_a(line) or
+          is_multicomment_b(line)):
+
+        return True
+
+    elif is_expression(line) != None:
+        return True
+
+    return False
+
 
 def is_var_initialize(line):
 
@@ -218,7 +243,7 @@ def is_if_then(line):
     return False
 
 
-def is_end_if(line):
+def is_oic(line):
 
     # Checks if the line is
     # OIC
@@ -281,12 +306,15 @@ def is_case(line):
 
     # Checks if line is OMG
 
+
     try:
         match = re.match(R_OMG, line).groups()
         tokens.append([CF_KEY, match[1]])
         tokens.append([VAL_LIT, match[2]])
 
-        return True
+
+        return eval(match[2])
+
     except:
         pass
 
@@ -305,6 +333,21 @@ def is_end_case(line):
         pass
 
     return False
+
+def is_gtfo(line):
+
+    try:
+
+        match = re.match(R_GTFO, line).groups()
+        tokens.append([CF_KEY, match[1]])
+
+        return True
+
+    except:
+        pass
+
+    return False
+
 
 def is_multicomment_a(line):
 
@@ -1102,12 +1145,15 @@ def boolean_type_checker(line, mode, expression):
     anded = is_and(line, mode, expression)
     if anded != False:
         return(["", anded])
+
     ored = is_or(line, mode, expression)
     if ored != False:
         return(["", ored])
+
     xored = is_xor(line, mode, expression)
     if xored != False:
         return(["", xored])
+
     noted = is_not(line, mode, expression)
     if noted != False:
         return(["", noted])

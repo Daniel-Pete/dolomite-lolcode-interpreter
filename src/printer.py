@@ -26,3 +26,7 @@ def print_vars():
     for i in variables:
         print(i, "=", variables[i])
     print()
+
+def print_caseflag():
+    global CASE_FLAG
+    print(CASE_FLAG)

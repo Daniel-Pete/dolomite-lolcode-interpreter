@@ -3,11 +3,9 @@ HAI
   I HAS A b ITZ 5
   BOTH SAEM a AN b
 
-  IT R 18
+  IT R "hello"
+
   WTF?
-    OMG 1
-      VISIBLE "I'm the only oneeeee"
-      GTFO
     OMG 3
       VISIBLE "third time's a charm"
     OMG 5
@@ -23,6 +21,7 @@ HAI
       GTFO
     OMG 13
       VISIBLE "birthday ni taylor swift, dec 13"
+      GTFO
     OMG 17
       VISIBLE "seventeen right here"
     OMGWTF

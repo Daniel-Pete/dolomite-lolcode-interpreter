@@ -36,10 +36,10 @@ R_NOWAI = "(\s*)(NO WAI)(\s*)"
 R_OIC = "(\s*)(OIC)(\s*)"
 
 # Switch-Case Statements 
-
 R_WTF = "(\s*)(WTF\?)(\s*)"
-R_OMG = "(\s*)(OMG) (-?[0-9]+)"
+R_OMG = "(\s*)(OMG) ([a-zA-Z]+[a-zA-Z0-9\_]*|-?[0-9]*\.[0-9]+|-?[0-9]+|\"[^\"]*\"|WIN|FAIL)"
 R_OMGWTF = "(\s*)(OMGWTF)(\s*)"
+R_GTFO = "(\s*)(GTFO)(\s*)"
 
 # Other
 R_LOOP = "^[a-zA-Z]+[a-zA-Z0-9\_]*$"
@@ -133,3 +133,11 @@ END = "END"
 SKIP = "SKIP"
 MULTICOMMENT = "MULTICOMMENT"
 IT = "IT"
+SWITCH = "SWITCH"
+OMG = "OMG"
+OMG_STATEMENT = "OMG STATEMENT"
+
+
+# TROOFs
+WIN = True
+FAIL = False
