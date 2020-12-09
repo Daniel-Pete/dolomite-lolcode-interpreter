@@ -1,13 +1,15 @@
 HAI
   I HAS A a ITZ 12
   I HAS A b ITZ 5
+
   BOTH SAEM a AN b
 
-  IT R "hello"
+  IT R 3
 
   WTF?
     OMG 3
       VISIBLE "third time's a charm"
+      GTFO
     OMG 5
       VISIBLE "no one wants a five"
       GTFO
@@ -19,11 +21,13 @@ HAI
     OMG 11
       VISIBLE "Friends don't lie. -Eleven"
       GTFO
+
     OMG 13
       VISIBLE "birthday ni taylor swift, dec 13"
       GTFO
     OMG 17
       VISIBLE "seventeen right here"
+      GTFO
     OMGWTF
       VISIBLE "ano na"
       VISIBLE IT

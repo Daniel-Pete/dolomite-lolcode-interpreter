@@ -3,11 +3,15 @@ from printer import *
 file = "lolcode/sample.lol"
 
 global TOGGLE, SUBTOGGLE, CONTROL_FLAG, CASE_FLAG
+global MATCHED_FLAG, GTFO_FLAG
 
 TOGGLE = START
 SUBTOGGLE = START
+
 CONTROL_FLAG = None
 CASE_FLAG = None
+MATCHED_FLAG = False
+GTFO_FLAG = False
 
 def start_grammar(line):    
     global TOGGLE, SUBTOGGLE
@@ -37,14 +41,23 @@ def statement_grammar(line):
     elif is_if_then(line):
         TOGGLE = IF
         SUBTOGGLE = IF
-        CONTROL_FLAG = eval(variables[IT])
+
+        try:
+            CONTROL_FLAG = eval(variables[IT])
+        except:
+            return False
 
         return True
 
     elif is_switch(line):
         TOGGLE = OMG 
         SUBTOGGLE = START
-        CONTROL_FLAG = eval(variables[IT])
+
+        try:
+            CONTROL_FLAG = eval(variables[IT])
+        except:
+            return False
+
         return True
 
     return False
@@ -135,48 +148,84 @@ def else_grammar(line):
 def omg_grammar(line):
 
     global TOGGLE, SUBTOGGLE, CONTROL_FLAG, CASE_FLAG
+    global MATCHED_FLAG, GTFO_FLAG
+
+    # print(TOGGLE, SUBTOGGLE, CONTROL_FLAG, MATCHED_FLAG, GTFO_FLAG, 
+    #        CASE_FLAG, CONTROL_FLAG)
 
 
-    if is_case(line) and SUBTOGGLE == STATEMENT:
+    if (is_case(line) and 
+        SUBTOGGLE == STATEMENT):
         return True
     
-    elif is_case(line):
+    elif (is_case(line) and 
+          SUBTOGGLE != LAST_CASE):
 
         CASE_FLAG = is_case(line)
 
         if CASE_FLAG == CONTROL_FLAG:
             SUBTOGGLE = STATEMENT
+            MATCHED_FLAG = True
             return True
         else:
             SUBTOGGLE = SKIP
             return True  
+
+    elif is_gtfo(line) and MATCHED_FLAG == True:
+        SUBTOGGLE = SKIP
+        GTFO_FLAG = True
+        return True
+        
     
     elif is_gtfo(line):
         SUBTOGGLE = SKIP
         return True
 
     elif is_end_case(line):
+        SUBTOGGLE = LAST_CASE
         return True
 
-    elif is_oic(line):
+    elif (is_oic(line) and 
+          SUBTOGGLE == LAST_CASE):
+
         TOGGLE = STATEMENT
         SUBTOGGLE = START
+        CONTROL_FLAG = None
+        CASE_FLAG = None
+        MATCHED_FLAG = False
+
         return True
+    
+    elif (is_oic(line) and 
+          SUBTOGGLE != LAST_CASE):
+
+        return False
 
     elif SUBTOGGLE == SKIP:
         return True
 
-    elif is_statement(line) and SUBTOGGLE == STATEMENT:
+    elif SUBTOGGLE == LAST_CASE:
+
+
+        if (MATCHED_FLAG == False or
+            GTFO_FLAG == False):
+            if is_statement(line):
+                return True
+        
+        else:
+            return True
+
+    elif (is_statement(line) and 
+         (SUBTOGGLE == STATEMENT)):
+
         return True
     
 
     return False
 
-
-
 def tokenize(fn):
 
-    global TOGGLE, SUBTOGGLE, CONTROL_FLAG
+    global TOGGLE, SUBTOGGLE, CONTROL_FLAG, CASE_FLAG, MATCHED_FLAG, GTFO_FLAG
 
     try:
         f = open(fn, "r")
@@ -259,8 +308,10 @@ def tokenize(fn):
     # If program ends without KTHXBYE
     # then it will be an error.
 
+    
     if TOGGLE != END:
         show_error(fn, num, line)
+    
     
 
 def main():
