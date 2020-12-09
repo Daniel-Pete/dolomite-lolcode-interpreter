@@ -1,0 +1,4 @@
+HAI
+    9
+    NOT FAIL
+KTHXBYE
