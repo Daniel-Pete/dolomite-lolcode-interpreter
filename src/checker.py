@@ -18,28 +18,33 @@ def is_empty(line):
 def is_statement(line):
 
     if is_var_initialize(line):
+
         return True
 
     elif is_var_declare(line):
         return True
 
-    elif (is_var_assign(line) or
-          is_print(line) or
+    elif (is_var_assign(line)):
+        return True
+
+    elif(is_print(line) or
           is_input(line) or
           is_comment(line) or
           is_smoosh(line) or
           is_empty(line)):
-
         return True
 
     elif (is_multicomment_a(line) or
           is_multicomment_b(line)):
+        
 
         return True
 
     elif is_expression(line) != None:
-        return True
 
+
+        return True
+    
     return False
 
 
@@ -85,11 +90,11 @@ def is_var_initialize(line):
             # check if the other variable exists.
 
             if variables.__contains__(match[4]):
-                
                 variables[str(match[2])] = variables[match[4]]
                 return True
 
-            return False
+            else:
+                return False
 
         elif re.match(R_STR, str(match[4])):
 
