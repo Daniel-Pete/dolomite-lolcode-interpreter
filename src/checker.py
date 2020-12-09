@@ -412,6 +412,9 @@ def is_documentation(line):
 def concatenation(match):
 
 
+    NEWLINE_FLAG = False
+
+
     if is_expression(match):
         print(variables[IT])
         return "EXPRESSION"
@@ -429,11 +432,18 @@ def concatenation(match):
     # will be split using '"'. Otherwise, it will
     # be split with space.
 
+    
 
     if '"' in match:
         to_concat = [str(i) for i in match.split('"') if i != '']
     else:
         to_concat = [str(i).strip() for i in match.split() if i != '']
+
+
+    
+    if to_concat[-1].strip() == '!':
+        NEWLINE_FLAG = True
+        
     
     
     for i, j in enumerate(to_concat):
@@ -477,9 +487,12 @@ def concatenation(match):
             concat.append(i)
 
         else:
-            return 
+            if NEWLINE_FLAG == True:
+                continue
+            else:
+                return 
 
-    return concat
+    return (concat, NEWLINE_FLAG)
 
 
 
@@ -495,7 +508,8 @@ def is_smoosh(line):
         concat = concatenation(match[2])
 
         if concat:
-            variables[IT] = ''.join(concat)
+
+            variables[IT] = ''.join(concat[0])
             return True
 
         else:
@@ -515,6 +529,7 @@ def is_print(line):
 
     try:
 
+
         match = re.match(R_VISI, line).groups()
         tokens.append([PRINT_ID, match[1]])
 
@@ -522,8 +537,14 @@ def is_print(line):
 
         if concat == "EXPRESSION":
             return True
+
         elif concat:
-            print(''.join(concat).strip('"'))
+
+            if concat[1]:
+                print(''.join(concat[0]).strip('"'), end = "")
+            else:
+                print(''.join(concat[0]).strip('"'))
+            
             return True
 
         else:

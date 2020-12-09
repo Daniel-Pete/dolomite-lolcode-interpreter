@@ -13,6 +13,7 @@ CASE_FLAG = None
 MATCHED_FLAG = False
 GTFO_FLAG = False
 
+
 def start_grammar(line):    
     global TOGGLE, SUBTOGGLE
 
@@ -150,10 +151,6 @@ def omg_grammar(line):
     global TOGGLE, SUBTOGGLE, CONTROL_FLAG, CASE_FLAG
     global MATCHED_FLAG, GTFO_FLAG
 
-    # print(TOGGLE, SUBTOGGLE, CONTROL_FLAG, MATCHED_FLAG, GTFO_FLAG, 
-    #        CASE_FLAG, CONTROL_FLAG)
-
-
     if (is_case(line) and 
         SUBTOGGLE == STATEMENT):
         return True
@@ -175,7 +172,6 @@ def omg_grammar(line):
         SUBTOGGLE = SKIP
         GTFO_FLAG = True
         return True
-        
     
     elif is_gtfo(line):
         SUBTOGGLE = SKIP
@@ -223,7 +219,7 @@ def omg_grammar(line):
 
     return False
 
-def tokenize(fn):
+def analyze(fn):
 
     global TOGGLE, SUBTOGGLE
 
@@ -306,8 +302,7 @@ def tokenize(fn):
                 return
     
     # If program ends without KTHXBYE
-    # then it will be an error.
-
+    # then it will result into an error.
     
     if TOGGLE != END:
         show_error(fn, num, line)
@@ -315,8 +310,6 @@ def tokenize(fn):
     
 
 def main():
-    tokenize(file)
-    # print_lexemes()
-    # print_vars()    
+    analyze(file)
 
 main()
