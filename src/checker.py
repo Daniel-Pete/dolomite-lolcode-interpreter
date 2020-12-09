@@ -12,6 +12,9 @@ ERROR = SYNTAX_ERROR
 tokens = []
 variables = {}
 
+WIN = True
+FAIL = False
+
 def is_empty(line):
 
     if re.match(R_EMPTY, line):
@@ -38,7 +41,18 @@ def is_var_initialize(line):
         if match[3]: tokens.append([VAR_ASS, str(match[3])])
 
 
-        if re.match(R_VARIDENT, match[4]):
+        
+        if re.match(R_WIN, str(match[4])):
+            tokens.append([TROOF_LIT, match[4]])
+            variables[str(match[2])] = str(match[4])
+            return True
+
+        elif re.match(R_FAIL, str(match[4])):
+            tokens.append([TROOF_LIT, match[4]])
+            variables[str(match[2])] = str(match[4])
+            return True
+
+        elif re.match(R_VARIDENT, match[4]):
 
             # For assignment from
             # another variable, it must first
@@ -357,20 +371,29 @@ def is_documentation(line):
 
 def concatenation(match):
 
-    ints = re.findall(R_NUMBR, match)
-    floats = re.findall(R_NUMBAR, match)
-    strings = re.findall(R_STR, match)
-    strings = [i.strip('"\'') for i in strings]
 
+    if is_expression(match):
+        print(variables["IT"])
+        return "EXPRESSION"
+
+    floats = re.findall(R_NUMBAR, match)
+    ints = re.findall(R_NUMBR, match)
+    strings = re.findall(R_STR, match)
+    wins = re.findall(R_WIN, match)
+    fails = re.findall(R_FAIL, match)
+    strings = [i.strip('"') for i in strings]
+    
     # If there are string quotes, then it
     # will be split using '"'. Otherwise, it will
     # be split with space.
 
+
     if '"' in match:
-        to_concat = [str(i).strip() for i in match.split('"') if i != '']
+        to_concat = [str(i) for i in match.split('"') if i != '']
     else:
         to_concat = [str(i).strip() for i in match.split() if i != '']
-
+    
+    
     for i, j in enumerate(to_concat):
 
         if j not in strings:
@@ -405,7 +428,9 @@ def concatenation(match):
 
         elif (i in strings or
                 i in ints or
-                i in floats):
+                i in floats or
+                i in wins or 
+                i in fails):
             concat.append(i)
 
         else:
@@ -452,8 +477,10 @@ def is_print(line):
 
         concat = concatenation(match[2])
 
-        if concat:
-            print(''.join(concat))
+        if concat == "EXPRESSION":
+            return True
+        elif concat:
+            print(''.join(concat).strip('"'))
             return True
 
         else:
@@ -465,12 +492,18 @@ def is_print(line):
     return False
 
 
+
+# Functions from Ged's Branch
+# Used for parsing expressions
+
+
 def is_equal_comparison(line, expression):
     try:
         category = ""
         x = re.match(RE_EQUAL_Comparison, line).groups()
 
         expression += "("
+
         if(is_min_or_max(x[2]) != False):
             category = is_min_or_max(x[2])
 
@@ -782,20 +815,20 @@ def arithmetic_type_checker(line, expression):
     # line/string is either a literal or variable
     if re.match(R_STR, line):
         new = line.strip('"')
-        tokens.append(["String Literal", new])
+        tokens.append([STR_LIT, new])
         return([str(new), expression])
 
     elif re.match(R_NUMBAR, line):
-        tokens.append(["Numbar Literal", line])
+        tokens.append([NBAR_LIT, line])
         return([str(line), expression])
 
     elif re.match(R_NUMBR, line):
-        tokens.append(["Numbr Literal", line])
+        tokens.append([NBR_LIT, line])
         return([str(line), expression])
 
     elif re.match(R_VARIABLE, line):
         if variables.__contains__(line):
-            tokens.append(["Variable Identifier", line])
+            tokens.append([VAR_IDENT, line])
             return([str(variables[line]), expression])
 
     # if no matches == invalid data type for arithmetic operations
@@ -971,11 +1004,12 @@ def boolean_type_checker(line, mode, expression):
 
     if re.match(R_VARIABLE, line):
         if variables.__contains__(line):
-            tokens.append(["Variable Identifier", line])
+            tokens.append([VAR_IDENT, line])
             return([str(variables[line]), expression])
 
     # To handle last 2 strings (literal/variable and delimiter)
     end_strings = line.split(" ")
+
     if len(end_strings) == 2:
         if re.match(R_TROOF, end_strings[0]):
             tokens.append(["TROOF Literal", end_strings[0]])
@@ -983,7 +1017,7 @@ def boolean_type_checker(line, mode, expression):
         elif re.match(R_VARIABLE, end_strings[0]):
             # Check if variable exists in variables dictionary
             if variables.__contains__(end_strings[0]):
-                tokens.append(["Variable Identifier", end_strings[0]])
+                tokens.append([VAR_IDENT, end_strings[0]])
                 arg1 = str(variables[end_strings[0]])
             # Variable referenced does not exist
             else:

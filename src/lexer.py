@@ -7,8 +7,9 @@ from printer import *
 file = "lolcode/sample.lol"
 # file = sys.argv[1]
 
-global TOGGLE
+global TOGGLE, SUBTOGGLE
 TOGGLE = "START"
+SUBTOGGLE = "START"
 
 
 def start_grammar(line):

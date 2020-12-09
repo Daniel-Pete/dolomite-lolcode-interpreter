@@ -11,13 +11,17 @@ R_KTB = "^(\s*)KTHXBYE(\s*)$"
 # Literals
 R_STR = "\"[^\"]*\""
 R_NUMBR = "-?[0-9]+"
-R_NUMBAR = "-?[0-9]*\.[0-9]"
+R_NUMBAR = "-?[0-9]*\.[0-9]*"
 R_VARIABLE = "^[a-zA-Z]+[a-zA-Z0-9\_]*$"
 R_VARIDENT = "([a-zA-Z]+[a-zA-Z0-9\_]*)"
+R_WIN = "WIN"
+R_FAIL = "FAIL"
+R_TROOF = "^WIN$|^FAIL$"
+
 
 # Variable Declaration, Initialization, Assignment
-R_IHA = "(\s*)(I HAS A) ([a-zA-Z]+[a-zA-Z0-9\_]*)(^\s*$)"
-R_IHAI = "(\s*)(I HAS A) ([a-zA-Z]+[a-zA-Z0-9\_]*) (ITZ) ([a-zA-Z]+[a-zA-Z0-9\_]*|-?[0-9]*\.[0-9]+|-?[0-9]+|\"[^\"]*\")"
+R_IHA = "(\s*)(I HAS A) ([a-zA-Z]+[a-zA-Z0-9\_]*)"
+R_IHAI = "(\s*)(I HAS A) ([a-zA-Z]+[a-zA-Z0-9\_]*) (ITZ) ([a-zA-Z]+[a-zA-Z0-9\_]*|-?[0-9]*\.[0-9]+|-?[0-9]+|\"[^\"]*\"|WIN|FAIL)"
 R_ASS = "(\s*)([a-zA-Z]+[a-zA-Z0-9\_]*) (R) (-?[0-9]*\.[0-9]+|-?[0-9]+|\"[^\"]*\")"
 
 # Input / Output
