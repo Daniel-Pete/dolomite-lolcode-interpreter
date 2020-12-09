@@ -16,8 +16,8 @@ R_TROOF = "^WIN$|^FAIL$"
 
 # Variable Declaration, Initialization, Assignment
 R_IHA = "(\s*)(I HAS A) ([a-zA-Z]+[a-zA-Z0-9\_]*)"
-R_IHAI = "(\s*)(I HAS A) ([a-zA-Z]+[a-zA-Z0-9\_]*) (ITZ) ([a-zA-Z]+[a-zA-Z0-9\_]*|-?[0-9]*\.[0-9]+|-?[0-9]+|\"[^\"]*\"|WIN|FAIL)"
-R_ASS = "(\s*)([a-zA-Z]+[a-zA-Z0-9\_]*) (R) (-?[0-9]*\.[0-9]+|-?[0-9]+|\"[^\"]*\"|WIN|FAIL)"
+R_IHAI = "(\s*)(I HAS A) ([a-zA-Z]+[a-zA-Z0-9\_]*) (ITZ) ([a-zA-Z\s]+[a-zA-Z0-9\_\s]*|-?[0-9]*\.[0-9]+|-?[0-9]+|\"[^\"]*\"|WIN|FAIL)"
+R_ASS = "(\s*)([a-zA-Z]+[a-zA-Z0-9\_]*) (R) ([a-zA-Z\s]+[a-zA-Z0-9\_\s]*|-?[0-9]*\.[0-9]+|-?[0-9]+|\"[^\"]*\"|WIN|FAIL)"
 
 # Input / Output
 R_VISI = "(\s*)(VISIBLE) (.*)(\s*)"

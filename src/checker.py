@@ -62,7 +62,13 @@ def is_var_initialize(line):
         if match[3]: 
             tokens.append([VAR_ASS, str(match[3])])
 
-        if re.match(R_WIN, str(match[4])):
+
+        if is_expression(match[4]):
+
+            variables[match[2]] = variables[IT]
+            return True
+
+        elif re.match(R_WIN, str(match[4])):
             tokens.append([TROOF_LIT, match[4]])
             variables[str(match[2])] = str(match[4])
             return True
@@ -141,12 +147,39 @@ def is_var_assign(line):
 
         match = re.match(R_ASS, line).groups()
 
-        if variables.__contains__(match[1]):
 
+        if variables.__contains__(match[1]):
+                                    
+            if is_expression(match[3]):
+
+                variables[match[1]] = variables[IT]
+                return True
+
+            elif re.match(R_TROOF, match[3]):
+                variables[match[1]] = match[3]
+            
+            elif re.match(R_VARIDENT, match[3]):
+
+                if variables.__contains__(match[3]):
+                    
+                    variables[str(match[1])] = variables[match[3]]
+                    return True
+
+                else:
+                    return False
+            
+            elif re.match(R_NUMBAR, match[3]):
+                variables[match[1]] = match[3]
+
+            elif re.match(R_NUMBR, match[3]):
+                variables[match[1]] = match[3]
+
+            elif re.match(R_STR, match[3]):
+                variables[match[1]] = match[3]
+
+            
             tokens.append([VAR_IDENT, match[1]])
             tokens.append([VAR_ASS, match[2]])
-
-            variables[match[1]] = match[3]
 
             return True
 
@@ -179,9 +212,7 @@ def is_bye(line):
         tokens.append([COD_DEL, line])
         return True
 
-    return False
-
-
+    return False 
 
 def is_input(line):
 

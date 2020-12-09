@@ -13,7 +13,6 @@ CASE_FLAG = None
 MATCHED_FLAG = False
 GTFO_FLAG = False
 
-
 def start_grammar(line):    
     global TOGGLE, SUBTOGGLE
 
@@ -307,8 +306,6 @@ def analyze(fn):
     if TOGGLE != END:
         show_error(fn, num, line)
     
-    
-
 def main():
     analyze(file)
 
