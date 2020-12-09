@@ -225,7 +225,7 @@ def omg_grammar(line):
 
 def tokenize(fn):
 
-    global TOGGLE, SUBTOGGLE, CONTROL_FLAG, CASE_FLAG, MATCHED_FLAG, GTFO_FLAG
+    global TOGGLE, SUBTOGGLE
 
     try:
         f = open(fn, "r")
