@@ -26,7 +26,7 @@ R_ASS = "(\s*)([a-zA-Z]+[a-zA-Z0-9\_]*) (R) (-?[0-9]*\.[0-9]+|-?[0-9]+|\"[^\"]*\
 
 # Input / Output
 R_VISI = "(\s*)(VISIBLE) (.*)(\s*)"
-R_GIME = "(\s*)(GIMMEH) ([a-zA-Z]+[a-zA-Z0-9\_]*)(\s*)"
+R_GIME = "(\s*)(GIMMEH) ([a-zA-Z]+[a-zA-Z0-9\_]*)([\s*)"
 
 # Documentation
 R_BTW = "(\s*)(BTW) ([a-zA-Z0-9\_\s]*)"

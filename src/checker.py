@@ -378,9 +378,11 @@ def concatenation(match):
 
     floats = re.findall(R_NUMBAR, match)
     ints = re.findall(R_NUMBR, match)
-    strings = re.findall(R_STR, match)
+
     wins = re.findall(R_WIN, match)
     fails = re.findall(R_FAIL, match)
+
+    strings = re.findall(R_STR, match)
     strings = [i.strip('"') for i in strings]
     
     # If there are string quotes, then it
