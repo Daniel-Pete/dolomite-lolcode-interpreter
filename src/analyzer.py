@@ -13,6 +13,14 @@ CASE_FLAG = None
 MATCHED_FLAG = False
 GTFO_FLAG = False
 
+
+def is_empty(line):
+
+    if re.match(R_EMPTY, line):
+        return True
+
+    return False
+
 def start_grammar(line):    
     global TOGGLE, SUBTOGGLE
 
@@ -26,11 +34,52 @@ def start_grammar(line):
 
     return False
 
+
+def is_statement(line):
+
+    global TOGGLE
+
+    if is_multicomment_a(line):
+        TOGGLE = MULTICOMMENT
+        return True
+
+    elif is_multicomment_b(line):
+        TOGGLE = MULTICOMMENT
+        return True
+
+    if is_var_initialize(line):
+        return True
+
+    elif is_var_declare(line):
+        return True
+
+    elif (is_var_assign(line)):
+        return True
+
+    elif is_print(line):
+        return True
+    elif is_input(line):
+        return True
+    elif is_comment(line):
+        return True
+    elif is_smoosh(line):
+        return True
+    elif is_smoosh(line):
+        return True
+    elif is_empty(line):
+
+        return True
+
+    elif is_expression(line):
+        return True
+
+    return False
+
+
+
 def statement_grammar(line):
 
     global TOGGLE, SUBTOGGLE, CONTROL_FLAG
-
-    
 
     if is_bye(line):
         TOGGLE = END
@@ -239,6 +288,7 @@ def analyze(fn):
 
         line = line.strip("\n")
 
+
         if is_empty(line):
             continue
 
@@ -256,7 +306,7 @@ def analyze(fn):
                 continue
             else:
                 show_error(fn, num, line)
-                return
+                return     
         
         elif TOGGLE == MULTICOMMENT:
 

@@ -47,7 +47,6 @@ R_LOOP = "^[a-zA-Z]+[a-zA-Z0-9\_]*$"
 R_EMPTY = "(^\s*$)"
 R_SMOOSH = "(\s*)(SMOOSH) (.*)"
 
-
 # Comparison Operations
 R_EQUAL_COMPARISON = "(\s*)(.*)(BOTH SAEM) ([^ ]*) (AN) ([^ ]*)(.*)"
 R_NOTEQUAL_COMPARISON = "(\s*)(.*)(DIFFRINT) ([^ ]*) (AN) ([^ ]*)(.*)"
@@ -125,6 +124,8 @@ INF_AND_OP = "Infinite And Operator"
 SYNTAX_ERROR = "Syntax Error."
 VAR_ERROR = "Undefined Error."
 FILE_ERROR = "File Error: file cannot be found"
+
+ERROR = SYNTAX_ERROR
 
 # Toggles
 START = "START"
