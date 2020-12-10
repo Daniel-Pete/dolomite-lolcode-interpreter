@@ -3,15 +3,14 @@
 # Nov 13 2020
 
 from checker import *
+from tkinter import messagebox
 global ERROR
 
 def show_error(fn, num, line):
 
     global ERROR
-
-    print("File", fn, "line", num + 1)
-    print("\n\t", line, "\n")
-    print(ERROR)
+    errorText = "File " + str(fn) + " line " + str(num + 1) + "\n\t" + str(line) + "\n" + ERROR
+    messagebox.showerror("Message Box", errorText)
 
 def print_lexemes():
 

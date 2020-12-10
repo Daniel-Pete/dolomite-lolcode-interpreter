@@ -1,14 +1,12 @@
 from tkinter import *
 from tkinter import ttk
-from tkinter import filedialog, simpledialog
+from tkinter import filedialog, messagebox
 import lexer
 import os
 
-
-
 root = Tk()
 root.title('CMSC 124 Project')
-root.geometry("1200x800")
+root.geometry("1000x700")
 
 global filename
 filename = ""
@@ -20,10 +18,12 @@ displayFilename = "Selected File: None"
 # open file dialog 
 def openFile():
     global filename, displayFilename
-    filename = filedialog.askopenfilename(initialdir="/dmagu", title = "Select a LOLcode file", filetypes = (("LOL files", "*.lol"), ("All files", "*.*")))
-    head, tail = os.path.split(filename)
-    displayFilename = "Selected File: " + tail
-    displayFile.config(text = displayFilename)
+    filename = filedialog.askopenfilename(initialdir="/", title = "Select a LOLcode file", filetypes = (("LOL files", "*.lol"), ("All files", "*.*")))
+    if filename:
+        head, tail = os.path.split(filename)
+        displayFilename = "Selected File: " + tail
+        displayFile.config(text = displayFilename)
+
     
 # clear all text in text area
 def clear():
@@ -40,57 +40,65 @@ def saveText():
     displayFile.config(text = displayFilename)
 
 
+# executes the LOLcode file if the filename is not empty
+# otherwise, it will prompt the user that no file has been selected
 def getOutput():
     global filename
+
+    # check if the filename is not empty
     if filename: 
+        # clear the treeview first before putting any data
         removeAll(lexemeTable)
         removeAll(symbolTable)
 
-    data = lexer.tokenize(filename)
+        # process the file
+        data = lexer.tokenize(filename)
+
+        # display the data in the treeview (lexeme and symbol table)
+        printLexeme(data[0])
+        printSymbols(data[1])
+
+        # this will print the output of the LOLcode file
+        textOut = ""
+        for text in data[2]:
+            textOut += text + "\n"
+
+        outputText.config(state = NORMAL)
+        outputText.delete(1.0, END)
+        outputText.insert(END, textOut)
+        outputText.config(state = DISABLED)
+
+    else: messagebox.showwarning("Message Box", "No File Selected!")
 
 
-    printLexeme(data[0])
-    printSymbols(data[1])
 
-    textOut = ""
-    for text in data[2]:
-        textOut += text + "\n"
-
-    outputText.config(state = NORMAL)
-    outputText.delete(1.0, END)
-    outputText.insert(END, textOut)
-    # getInputFromUser()
-    outputText.config(state = DISABLED)
-
-# def getInputFromUser():
-#     gimmeInput = simpledialog.askstring("GIMME INPUT", "Enter your input")
-#     print(gimmeInput)
-
-# Remove all records
+# removes all the data in the treeview
 def removeAll(table):
 	for record in table.get_children():
 		table.delete(record)
 
 
+# display the lexemes on the treeview
 def printLexeme(lexemeData):
-
-    global lexemeCount
     lexemeCount=0
 
-    for record in lexemeData:
+    for lexeme in lexemeData:
 
-        lexemeTable.insert(parent='', index='end', iid=lexemeCount, text="", values=(record[0], record[1]), tags=('lexemes_bg'))
+        lexemeTable.insert(parent='', index='end', iid=lexemeCount, text="", values=(lexeme[0], lexeme[1]), tags=('lexemes_bg'))
         lexemeCount += 1
 
 
-def printSymbols(variables):
+# display the symbol table on the treeview
+def printSymbols(symbols):
     symCount=0
 
-    for key, value in variables.items():
+    for key, value in symbols.items():
 
-        symbolTable.insert(parent='', index='end', iid=symCount, text="", values=(key, value), tags=('symbol_bg',))
+        symbolTable.insert(parent='', index='end', iid=symCount, text="", values=(key, value), tags=('symbol_bg'))
         symCount += 1
 
+
+# -------- Frames --------- #
 
 # frame for file button
 buttonFileFrame = Frame(root)
@@ -104,64 +112,75 @@ textFileFrame.pack(pady=20)
 executeButtonFrame = Frame(root)
 executeButtonFrame.pack(pady=20)
 
+# frame for the lexeme table label
 labelLexeme = Frame(root)
 labelLexeme.pack(pady = 20)
 
+# frame for the symbol table label
 labelSymbol = Frame(root)
 labelSymbol.pack(pady = 20)
 
-fileButton = Button(buttonFileFrame, text = "Select File", command = openFile, height = 1, width = 43)
-fileButton.pack()
+# frame for the output text area
+outputFrame = Frame(root)
+outputFrame.pack(pady=20)
 
-displayFile = Label(buttonFileFrame, text = displayFilename)
-displayFile.pack()
+# frame for lexeme treeview
+lexemeFrame = Frame(root)
+lexemeFrame.pack()
 
-lexemeLabel = Label(labelLexeme, text = 'Lexemes', font = ("Arial Bold", 20))
-lexemeLabel.pack()
+# frame for symbol table treeview
+symbolFrame = Frame(root)
+symbolFrame.pack(pady=20)
 
-symbolLabel = Label(labelSymbol, text = 'Symbol Table', font = ("Arial Bold", 20))
-symbolLabel.pack()
+
+# ----------- Widgets ------------ #
+
+
+#### Scrollbars #####
 
 textScrollbar = Scrollbar(textFileFrame)
 textScrollbar.pack(side = RIGHT, fill = Y)
 
-textArea = Text(textFileFrame, font = ("Helvetica", 11), height = 14, width = 40)
-textArea.pack()
-
-clearButton = Button(textFileFrame, text = "CLEAR", command = clear, height = 1, width = 21)
-clearButton.pack(side = LEFT)
-
-saveButton = Button(textFileFrame, text = "SAVE", command = saveText, height = 1, width = 21)
-saveButton.pack(side = RIGHT)
-
-executeButton = Button(executeButtonFrame, text = "EXECUTE", command = getOutput, height = 1, width = 100)
-executeButton.pack()
-
-# window location of buttons and text area
-buttonFileFrame.place(x = 200, y = 10, anchor = N)
-textFileFrame.place(x = 200, y = 70, anchor = N)
-executeButtonFrame.place(x = 600, y = 350, anchor = N)
-labelLexeme.place(x = 600, y = 10, anchor = N)
-labelSymbol.place(x = 1000, y = 10, anchor = N)
-
-
-outputFrame = Frame(root)
-outputFrame.pack(pady=20)
-
 outputScrollbar = Scrollbar(outputFrame)
 outputScrollbar.pack(side = RIGHT, fill = Y)
 
-outputText = Text(outputFrame, font = ("Helvetica", 11), height = 15, width = 100, state = DISABLED)
+#### Text Area/Box ####
+
+textArea = Text(textFileFrame, font = ("Comic Sans", 11), height = 14, width = 40)
+textArea.pack()
+
+outputText = Text(outputFrame, font = ("Helvetica", 11), height = 15, width = 118, state = DISABLED)
 outputText.pack()
 
+#### Buttons ####
 
+fileButton = Button(buttonFileFrame, text = "Open File", command = openFile, height = 1, width = 43, bg = "silver")
+fileButton.pack()
+
+clearButton = Button(textFileFrame, text = "CLEAR", command = clear, height = 1, width = 21, bg = "silver")
+clearButton.pack(side = LEFT)
+
+saveButton = Button(textFileFrame, text = "SAVE", command = saveText, height = 1, width = 21, bg = "silver")
+saveButton.pack(side = RIGHT)
+
+executeButton = Button(executeButtonFrame, text = "EXECUTE", command = getOutput, height = 1, width = 137, bg = "silver")
+executeButton.pack()
+
+#### Labels ####
+
+displayFile = Label(buttonFileFrame, text = displayFilename)
+displayFile.pack()
+
+lexemeLabel = Label(labelLexeme, text = 'Lexemes', font = ("Arial", 20))
+lexemeLabel.pack()
+
+symbolLabel = Label(labelSymbol, text = 'Symbol Table', font = ("Arial", 20))
+symbolLabel.pack()
+
+#### Scrollbar Configure ####
 
 outputText.config(yscrollcommand = outputScrollbar.set)
 outputScrollbar.config(command = outputText.yview)
-
-
-
-outputFrame.place(x = 600, y = 400, anchor = N)
 
 textArea.config(yscrollcommand = textScrollbar.set)
 textScrollbar.config(command = textArea.yview)
@@ -169,106 +188,84 @@ textScrollbar.config(command = textArea.yview)
 
 # the lexemes and symbol table treeview code is based from this source code: https://github.com/flatplanet/Intro-To-TKinter-Youtube-Course/blob/master/tree.py
 
-# Add some style
-lexemeStyle = ttk.Style()
-lexemeStyle.theme_use("default")
-# Configure our treeview colors
+# ----------- Lexeme Treeview -------------#
 
-lexemeStyle.configure("Treeview", 
-    background="#D3D3D3",
+# add style for the treeview
+treeViewStyle = ttk.Style()
+treeViewStyle.theme_use("default")
+
+# configure our treeview colors
+treeViewStyle.configure("Treeview", 
+    background="white",
     foreground="black",
     rowheight=25,
-    fieldbackground="#D3D3D3"
+    fieldbackground="white"
     )
-# # Change selected color
-# lexemeStyle.map('Treeview', 
-# 	background=[('selected', 'blue')])
 
-# Create Treeview Frame
-lexemeFrame = Frame(root)
-lexemeFrame.pack()
-
-# Treeview Scrollbar
+# add scrollbar to the lexeme treeview
 lexemeScroll = Scrollbar(lexemeFrame)
 lexemeScroll.pack(side=RIGHT, fill=Y)
 
-# Create Treeview
+# create treeview for the lexemes
 lexemeTable = ttk.Treeview(lexemeFrame, yscrollcommand=lexemeScroll.set)
-# Pack to the screen
 lexemeTable.pack()
 
-#Configure the scrollbar
+# configure the scrollbar
 lexemeScroll.config(command=lexemeTable.yview)
 
-# Define Our Columns
+# define Our columns for the lexeme table
 lexemeTable['columns'] = ("Lexemes", "Classification")
 
-# Formate Our Columns
+# formate columns of lexeme table
 lexemeTable.column("#0", width=0, stretch=NO)
 lexemeTable.column("Lexemes", anchor=W, width=140)
 lexemeTable.column("Classification", anchor=CENTER, width=140)
 
 
-# Create Headings 
-lexemeTable.heading("#0", text="Lexemes", anchor=W)
+# create headings for the lexeme table
+lexemeTable.heading("#0", text="", anchor=W)
 lexemeTable.heading("Lexemes", text="Lexemes", anchor=W)
 lexemeTable.heading("Classification", text="Classification", anchor=W)
 
-# Create white bg for the lexemes tree view
-lexemeTable.tag_configure('lexemes_bg', background="white")
 
+# ----------- Symbol Table Treeview -------------#
 
-symbolStyle = ttk.Style()
-symbolStyle.theme_use("default")
-# Configure our treeview colors
-
-symbolStyle.configure("Treeview", 
-    background="#D3D3D3",
-    foreground="black",
-    rowheight=25,
-    fieldbackground="#D3D3D3"
-    )
-# Change selected color
-symbolStyle.map('Treeview', 
-    background=[('selected', 'blue')])
-
-# Create Treeview Frame
-symbolFrame = Frame(root)
-symbolFrame.pack(pady=20)
-
-# Treeview Scrollbar
+# add scrollbar to the symbol table treeview
 symbolScroll = Scrollbar(symbolFrame)
 symbolScroll.pack(side=RIGHT, fill=Y)
 
-# Create Treeview
+# create treeview for the symbol table
 symbolTable = ttk.Treeview(symbolFrame, yscrollcommand=symbolScroll.set)
-# Pack to the screen
 symbolTable.pack()
 
-#Configure the scrollbar
+# configure the scrollbar
 symbolScroll.config(command=symbolTable.yview)
 
-# Define Our Columns
+# define columns for the symbol table
 symbolTable['columns'] = ("Identifier", "Value")
 
-# Formate Our Columns
+# format columns columns for the symbol table
 symbolTable.column("#0", width=0, stretch=NO)
 symbolTable.column("Identifier", anchor=W, width=140)
 symbolTable.column("Value", anchor=CENTER, width=140)
 
 
-# Create Headings 
+# create headings for the symbol table
 symbolTable.heading("#0", text="Identifier", anchor=W)
 symbolTable.heading("Identifier", text="Identifier", anchor=W)
 symbolTable.heading("Value", text="Value", anchor=W)
 
 
-# Create white bg for symbol table
-symbolTable.tag_configure('symbol_bg', background="white")
+# window location of buttons and text area
+buttonFileFrame.place(x = 180, y = 10, anchor = N)
+textFileFrame.place(x = 190, y = 70, anchor = N)
+executeButtonFrame.place(x = 500, y = 350, anchor = N)
+outputFrame.place(x = 500, y = 400, anchor = N)
+labelLexeme.place(x = 520, y = 10, anchor = N)
+labelSymbol.place(x = 830, y = 10, anchor = N)
+symbolFrame.place(x = 830, y = 50, anchor = N)
+lexemeFrame.place(x = 520, y = 50, anchor = N)
 
-symbolFrame.place(x = 1000, y = 50, anchor = N)
-lexemeFrame.place(x = 600, y = 50, anchor = N)
-
-
-
+# window is not resizable
+root.resizable(False, False)
 root.mainloop()

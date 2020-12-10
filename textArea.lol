@@ -1,1 +1,3 @@
-
+HAI
+ VISIBLE "Daniel"
+KTHXBYE

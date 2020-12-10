@@ -251,7 +251,7 @@ def is_print(line):
         concat = concatenation(match[2])
 
         if concat:
-            print(''.join(concat))
+            # print(''.join(concat))
             terminalPrint.append(''.join(concat).strip('"'))
             return True
 
