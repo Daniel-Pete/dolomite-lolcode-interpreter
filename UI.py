@@ -1,7 +1,7 @@
 from tkinter import *
 from tkinter import ttk
 from tkinter import filedialog, messagebox
-import lexer
+import analyzer
 import os
 
 root = Tk()
@@ -52,7 +52,7 @@ def getOutput():
         removeAll(symbolTable)
 
         # process the file
-        data = lexer.tokenize(filename)
+        data = analyzer.analyze(filename)
 
         # display the data in the treeview (lexeme and symbol table)
         printLexeme(data[0])
