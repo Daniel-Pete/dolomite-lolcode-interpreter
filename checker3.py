@@ -163,7 +163,8 @@ def solve_boolean(exp):
         arg = check_boolarg(groups[2])
 
         if arg != None:
-            return(arg)
+            if arg == True: return("WIN")
+            elif arg == False: return("FAIL")
 
     # Base case for infinite or
     if re.match(R_INFOR_BASE, exp):
@@ -171,7 +172,8 @@ def solve_boolean(exp):
         arg = check_boolarg(groups[2])
 
         if arg != None:
-            return(arg)
+            if arg == True: return("WIN")
+            elif arg == False: return("FAIL")
     
     # Check if "not" boolean operation
     if re.match(R_NOT, exp):
@@ -212,7 +214,7 @@ def solve_boolean(exp):
             result = arg1 ^ arg2
             return(solve_boolean(groups[1]+str(result)+groups[6]))
 
-    # Check if "and" boolean operation
+    # Check if "infinite and" boolean operation
     if re.match(R_INFINITE_AND, exp):
         groups = re.match(R_INFINITE_AND, exp).groups()
 
@@ -222,7 +224,7 @@ def solve_boolean(exp):
             result = arg1 and arg2
             return(solve_boolean(groups[1]+" "+str(result)+groups[5]))
 
-    # Check if "and" boolean operation
+    # Check if "infinite or" boolean operation
     if re.match(R_INFINITE_OR, exp):
         groups = re.match(R_INFINITE_OR, exp).groups()
 
