@@ -2,49 +2,11 @@ import re
 from regex import *
 from tkinter import simpledialog
 
-global ERROR
-ERROR = SYNTAX_ERROR
 
+errorList = []
 tokens = []
 variables = {}
 terminalPrint = []
-
-def is_empty(line):
-
-    if re.match(R_EMPTY, line):
-        return True
-
-    return False
-
-def is_statement(line):
-
-    if is_var_initialize(line):
-        return True
-
-    elif is_var_declare(line):
-        return True
-
-    elif (is_var_assign(line)):
-        return True
-
-    elif(is_print(line) or
-          is_input(line) or
-          is_comment(line) or
-          is_smoosh(line) or
-          is_empty(line)):
-
-        return True
-
-    elif (is_multicomment_a(line) or
-          is_multicomment_b(line)):
-        
-        return True
-
-
-    elif is_expression(line):
-        return True
-    
-    return False
 
 
 def is_var_initialize(line):
@@ -62,55 +24,46 @@ def is_var_initialize(line):
         
         tokens.append([VAR_DEC, str(match[1])])
         tokens.append([VAR_IDENT, str(match[2])])
+        
 
         if match[3]: 
             tokens.append([VAR_ASS, str(match[3])])
 
+        if is_expression(match[4]):
 
-        if re.match(R_WIN, str(match[4])):
-            tokens.append([TROOF_LIT, match[4]])
-            variables[str(match[2])] = str(match[4])
+            variables[match[2]] = variables[IT]
             return True
 
-        elif re.match(R_FAIL, str(match[4])):
-            tokens.append([TROOF_LIT, match[4]])
-            variables[str(match[2])] = str(match[4])
+        elif re.match(R_TROOF, match[4]):
+            variables[match[2]] = match[4]
             return True
 
+        
         elif re.match(R_VARIDENT, match[4]):
 
-            # For assignment from
-            # another variable, it must first
-            # check if the other variable exists.
-
             if variables.__contains__(match[4]):
-                variables[str(match[2])] = variables[match[4]]
+                
+                variables[match[2]] = variables[match[4]]
                 return True
 
             else:
                 return False
-
-        elif re.match(R_STR, str(match[4])):
-
-            # If the variable matches a string
-            # the string is stripped of its
-            # quotation marks
-
-            new = match[4].strip('"')
-            tokens.append([STR_LIT, new])
-
+        
         elif re.match(R_NUMBAR, match[4]):
+            variables[match[2]] = match[4]
+            return True
 
-            tokens.append([NBR_LIT, match[4]])
 
         elif re.match(R_NUMBR, match[4]):
-
-            tokens.append([NBAR_LIT, match[4]])
-
-        elif is_expression(match[4]):
-
-            variables[match[2]] = variables[IT]
+            variables[match[2]] = match[4]
             return True
+
+
+        elif re.match(R_STR, match[4]):
+            variables[match[2]] = match[4]
+            return True
+
+
 
         variables[str(match[2])] = match[4]
 
@@ -118,8 +71,7 @@ def is_var_initialize(line):
         return True
 
     except:
-
-        pass
+        errorList.append("Syntax Error: No matching statement")
     
     return False
 
@@ -142,7 +94,7 @@ def is_var_declare(line):
         return True
 
     except:
-        pass
+        errorList.append("Syntax Error: No matching statement")
     return False
 
 def is_var_assign(line):
@@ -191,7 +143,7 @@ def is_var_assign(line):
             return False
     
     except:
-        pass
+        errorList.append("Syntax Error: No matching statement")
 
     return False
 
@@ -228,25 +180,22 @@ def is_input(line):
     # Checks if the line
     # asks for an input
 
-    global ERROR
     try:
 
         match = re.match(R_GIME, line).groups()
-        tokens.append([INPUT_ID, match[0]])
-        tokens.append([VAR_IDENT, match[1]])
+        tokens.append([INPUT_ID, match[1]])
+        tokens.append([VAR_IDENT, match[2]])
 
         
         if variables.__contains__(match[2]):
             variables[match[2]] = getInputFromUser()
-
+            return True
         else:
-            ERROR = VAR_ERROR
+            errorList.append("Syntax Error: Variable does not exist")
             return False
 
-        return True
-
     except:
-        pass
+        errorList.append("Syntax Error: No matching statement")
 
     return False
 
@@ -263,7 +212,7 @@ def is_comment(line):
 
         return True
     except:
-        pass
+        errorList.append("Syntax Error: No matching statement")
 
     return False
 
@@ -278,7 +227,7 @@ def is_if_then(line):
         tokens.append([CF_KEY, match[1]])
         return True
     except:
-        pass
+        errorList.append("Syntax Error: No matching statement")
 
     return False
 
@@ -293,7 +242,7 @@ def is_oic(line):
         tokens.append([CF_KEY, match[1]])
         return True
     except:
-        pass
+        errorList.append("Syntax Error: No matching statement")
 
     return False
 
@@ -308,7 +257,7 @@ def is_if(line):
         tokens.append([CF_KEY, match[1]])
         return True
     except:
-        pass
+        errorList.append("Syntax Error: No matching statement")
 
     return False
 
@@ -323,7 +272,7 @@ def is_else(line):
         tokens.append([CF_KEY, match[1]])
         return True
     except:
-        pass
+        errorList.append("Syntax Error: No matching statement")
 
     return False
 
@@ -337,7 +286,7 @@ def is_switch(line):
         tokens.append([CF_KEY, match[1]])
         return True
     except:
-        pass
+        errorList.append("Syntax Error: No matching statement")
 
     return False
 
@@ -356,7 +305,7 @@ def is_case(line):
         return eval(match[2])
 
     except:
-        pass
+        errorList.append("Syntax Error: No matching statement")
 
     return False
 
@@ -370,7 +319,7 @@ def is_end_case(line):
 
         return True
     except:
-        pass
+        errorList.append("Syntax Error: No matching statement")
 
     return False
 
@@ -384,7 +333,7 @@ def is_gtfo(line):
         return True
 
     except:
-        pass
+        errorList.append("Syntax Error: No matching statement")
 
     return False
 
@@ -403,7 +352,7 @@ def is_multicomment_a(line):
             tokens.append([DOC_ID, match[3]])
         return True
     except:
-        pass
+        errorList.append("Syntax Error: No matching statement")
 
     return False
 
@@ -420,7 +369,7 @@ def is_multicomment_b(line):
         return True
 
     except:
-        pass
+        errorList.append("Syntax Error: No matching statement")
 
     return False
 
@@ -436,7 +385,7 @@ def is_end_multicomment(line):
 
         return True
     except:
-        pass
+        errorList.append("Syntax Error: No matching statement")
 
     return False
 
@@ -469,10 +418,8 @@ def concatenation(match):
     if '"' in match:
         to_concat = [str(i) for i in match.split('"') if i != '']
     else:
-        to_concat = [str(i).strip() for i in match.split() if i != '']
+        to_concat = [str(i) for i in match.split() if i != '']
     
-    if to_concat[-1].strip() == '!': 
-        NEWLINE_FLAG = True
     
     for i, j in enumerate(to_concat):
 
@@ -489,6 +436,12 @@ def concatenation(match):
 
             for elem in x:
                 to_concat.insert(i, elem)
+
+    detect = to_concat[-1].strip()
+
+    if detect == '!' and detect not in strings:
+
+        NEWLINE_FLAG = True
 
     concat = []
 
@@ -515,6 +468,7 @@ def concatenation(match):
             concat.append(i)
 
         else:
+
 
             if NEWLINE_FLAG == True:
                 continue
@@ -545,7 +499,7 @@ def is_smoosh(line):
             return False
 
     except:
-        pass
+        errorList.append("Syntax Error: No matching statement")
 
     return False
 
@@ -554,7 +508,6 @@ def is_print(line):
 
     # Checks if the line
     # is for printing
-    global ERROR
 
     try:
 
@@ -566,33 +519,30 @@ def is_print(line):
 
         if concat == "UNDEFINED":
 
-            return False
-
-        elif concat:
-
-            if concat[1]:
-                print(''.join(concat[0]).strip('"'), end = "")
-                terminalPrint.append(''.join(concat[0]).strip('"'), end = "")
-            else:
-                print(''.join(concat[0]).strip('"'))
-                terminalPrint.append(''.join(concat[0]).strip('"'))
-            
-            return True
-
-        else:
-
-
             try:
                 is_expression(match[2])
+                print(variables[IT])
+                terminalPrint.append(str(variables[IT]) + "\n")
                 return True
             except:
                 return False
 
 
+        elif concat:
+
+            if concat[1]:
+                print(''.join(concat[0]).strip('"'), end = "")
+                terminalPrint.append(''.join(concat[0]).strip('"'))
+            else:
+                print(''.join(concat[0]).strip('"'))
+                terminalPrint.append(''.join(concat[0]).strip('"') + "\n")
+            
+            return True
+
         return False
 
     except:
-        pass
+        errorList.append("Syntax Error: No matching statement")
 
     return False
 
@@ -777,6 +727,56 @@ def solve_comparison(exp):
         elif exp == "False":
             return("FAIL")
 
+    # Check if Addition
+    if re.match(R_ADDITION, exp):
+        groups = re.match(R_ADDITION, exp).groups()
+
+        arg1 = check_aritharg(groups[3])
+        arg2 = check_aritharg(groups[5])
+        if arg1 != None and arg2 != None:
+            result = arg1+arg2
+            return(solve_comparison(groups[1]+str(result)+groups[6]))
+
+    # Check if SUBTRACTION
+    if re.match(R_SUBTRACTION, exp):
+        groups = re.match(R_SUBTRACTION, exp).groups()
+
+        arg1 = check_aritharg(groups[3])
+        arg2 = check_aritharg(groups[5])
+        if arg1 != None and arg2 != None:
+            result = arg1-arg2
+            return(solve_comparison(groups[1]+str(result)+groups[6]))
+
+    # Check if MULTIPLICATION
+    if re.match(R_MULTIPLICATION, exp):
+        groups = re.match(R_MULTIPLICATION, exp).groups()
+
+        arg1 = check_aritharg(groups[3])
+        arg2 = check_aritharg(groups[5])
+        if arg1 != None and arg2 != None:
+            result = arg1*arg2
+            return(solve_comparison(groups[1]+str(result)+groups[6]))
+
+    # Check if DIVISION
+    if re.match(R_DIVISION, exp):
+        groups = re.match(R_DIVISION, exp).groups()
+
+        arg1 = check_aritharg(groups[3])
+        arg2 = check_aritharg(groups[5])
+        if arg1 != None and arg2 != None:
+            result = arg1/arg2
+            return(solve_comparison(groups[1]+str(result)+groups[6]))
+
+    # Check if MODULO
+    if re.match(R_MODULO, exp):
+        groups = re.match(R_MODULO, exp).groups()
+
+        arg1 = check_aritharg(groups[3])
+        arg2 = check_aritharg(groups[5])
+        if arg1 != None and arg2 != None:
+            result = arg1 % arg2
+            return(solve_comparison(groups[1]+str(result)+groups[6]))
+
     # Check if MAX
     if re.match(R_MAX, exp):
         groups = re.match(R_MAX, exp).groups()
@@ -825,23 +825,25 @@ def solve_comparison(exp):
 
 
 def check_aritharg(arg):
-    # line/string is either a literal or variable
+
+    # line/string is either a 
+    # literal or variable
+    
     if re.match(R_STR, arg):
         new = arg.strip('"')
-        # tokens.append(["String Literal", new])
-        return(str(new))
+        try:
+            return(eval(str(new)))
+        except:
+            errorList.append("Syntax Error: Statement cannot be evaluated")
 
     elif re.match(R_NUMBAR, arg):
-        # tokens.append(["Numbar Literal", arg])
         return(eval(arg))
 
     elif re.match(R_NUMBR, arg):
-        # tokens.append(["Numbr Literal", arg])
         return(eval(arg))
 
     elif re.match(R_VARIABLE, arg):
         if variables.__contains__(arg):
-            # tokens.append(["Variable Identifier", arg])
             return(eval(variables[arg]))
 
     return None
@@ -857,10 +859,10 @@ def check_boolarg(arg):
                 return True
             elif variables[arg] == "FAIL":
                 return False
-            # tokens.append(["Variable Identifier", arg])
-            return(eval(variables[arg]))
-
-        
+            try:
+                return(eval(variables[arg]))
+            except:
+                errorList.append("Syntax Error: Statement cannot be evaluated")
 
     return None
 

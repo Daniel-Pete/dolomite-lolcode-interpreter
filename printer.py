@@ -4,12 +4,11 @@
 
 from checker import *
 from tkinter import messagebox
-global ERROR
 
 def show_error(fn, num, line):
 
-    global ERROR
-    errorText = "File " + str(fn) + " line " + str(num + 1) + "\n\t" + str(line) + "\n" + ERROR
+
+    errorText = "File " + str(fn) + " line " + str(num + 1) + "\n\t" + str(line) + "\n" + str(errorList[-1])
     messagebox.showerror("Message Box", errorText)
 
 def print_lexemes():

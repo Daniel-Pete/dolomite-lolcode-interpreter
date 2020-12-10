@@ -1,5 +1,5 @@
 from printer import *
-
+from tkinter import messagebox
 
 global TOGGLE, SUBTOGGLE, CONTROL_FLAG
 global CASE_FLAG, MATCHED_FLAG, GTFO_FLAG
@@ -12,6 +12,13 @@ CASE_FLAG = None
 MATCHED_FLAG = False
 GTFO_FLAG = False
 
+def is_empty(line):
+
+    if re.match(R_EMPTY, line):
+        return True
+
+    return False
+
 def start_grammar(line):    
     global TOGGLE, SUBTOGGLE
 
@@ -21,6 +28,46 @@ def start_grammar(line):
         return True
 
     elif is_comment(line):
+        return True
+
+    return False
+
+def is_statement(line):
+
+    global TOGGLE
+
+    if is_multicomment_a(line):
+        TOGGLE = MULTICOMMENT
+        return True
+
+    elif is_multicomment_b(line):
+        TOGGLE = MULTICOMMENT
+        return True
+
+    if is_var_initialize(line):
+        return True
+
+    elif is_var_declare(line):
+        return True
+
+    elif (is_var_assign(line)):
+        return True
+
+    elif is_print(line):
+        return True
+    elif is_input(line):
+        return True
+    elif is_comment(line):
+        return True
+    elif is_smoosh(line):
+        return True
+    elif is_smoosh(line):
+        return True
+    elif is_empty(line):
+
+        return True
+
+    elif is_expression(line):
         return True
 
     return False
@@ -229,6 +276,7 @@ def analyze(fn):
         tokens.clear()
         variables.clear()
         terminalPrint.clear()
+        errorList.clear()
         TOGGLE = START
         SUBTOGGLE = START
         CONTROL_FLAG = None
@@ -255,31 +303,34 @@ def analyze(fn):
                     if start_grammar(line):
                         continue
                     else:
+                        errorList.append("Syntax Error: Expected HAI")
                         show_error(fn, num, line)
-                        return
+                        return [tokens, variables, terminalPrint]
 
                 elif TOGGLE == STATEMENT:
 
                     if statement_grammar(line):
                         continue
                     else:
+                        errorList.append("Syntax Error: Expected statement")
                         show_error(fn, num, line)
-                        return
+                        return [tokens, variables, terminalPrint]
                 
                 elif TOGGLE == MULTICOMMENT:
 
                     if comment_grammar(line):
                         continue
                     else:
+                        errorList.append("Syntax Error: Expected comment")
                         show_error(fn, num, line)
-                        return
+                        return [tokens, variables, terminalPrint]
 
                 elif TOGGLE == IF:
                     if if_grammar(line):
                         continue
                     else:
                         show_error(fn, num, line)
-                        return
+                        return [tokens, variables, terminalPrint]
 
                 elif TOGGLE == ELSE:
 
@@ -287,7 +338,7 @@ def analyze(fn):
                         continue
                     else:
                         show_error(fn, num, line)
-                        return
+                        return [tokens, variables, terminalPrint]
 
                 elif TOGGLE == OMG:
 
@@ -295,36 +346,34 @@ def analyze(fn):
                         continue
                     else:
                         show_error(fn, num, line)
-                        return
+                        return [tokens, variables, terminalPrint]
 
                 elif (TOGGLE == MULTICOMMENT 
                     and is_bye(line)):
 
                     show_error(fn, num, line)
-                    return
+                    return [tokens, variables, terminalPrint]
 
                 elif TOGGLE == END:
 
                     if line:
+                        errorList.append("Syntax Error: File already closed with KTHXBYE")
                         show_error(fn, num, line)
-                        return
+                        return [tokens, variables, terminalPrint]
             
             # If program ends without KTHXBYE
             # then it will result into an error.
             
             if TOGGLE != END:
+                errorList.append("Syntax Error: File not closed with KTHXBYE")
                 show_error(fn, num, line)
 
-            outList = [tokens, variables, terminalPrint]
-
-            return outList
+            return [tokens, variables, terminalPrint]
 
 
     except:
-        print(FILE_ERROR)
+        messagebox.showerror("Message Box", "File Error: File not found")
         return
 
 
-
-    
 

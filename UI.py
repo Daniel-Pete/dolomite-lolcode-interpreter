@@ -5,7 +5,7 @@ import analyzer
 import os
 
 root = Tk()
-root.title('CMSC 124 Project')
+root.title('LOLcode Interpreter')
 root.geometry("1000x700")
 
 global filename
@@ -18,7 +18,7 @@ displayFilename = "Selected File: None"
 # open file dialog 
 def openFile():
     global filename, displayFilename
-    filename = filedialog.askopenfilename(initialdir="/", title = "Select a LOLcode file", filetypes = (("LOL files", "*.lol"), ("All files", "*.*")))
+    filename = filedialog.askopenfilename(initialdir="/dmagu", title = "Select a LOLcode file", filetypes = (("LOL files", "*.lol"), ("All files", "*.*")))
     if filename:
         head, tail = os.path.split(filename)
         displayFilename = "Selected File: " + tail
@@ -33,11 +33,13 @@ def clear():
 def saveText():
     global filename, displayFilename
     input = textArea.get("1.0", END)
-    with open("textArea.lol", "w") as wf:
-        wf.write(input)
-    filename = "textArea.lol"
-    displayFilename = "Selected File: " + filename
-    displayFile.config(text = displayFilename)
+    if not textArea.compare("end-1c", "==", "1.0"):
+        with open("data/textArea.lol", "w") as wf:
+            wf.write(input)
+        filename = "data/textArea.lol"
+        displayFilename = "Selected File: textArea.lol"
+        displayFile.config(text = displayFilename)
+    else: messagebox.showwarning("Message Box", "Text area input file is empty")
 
 
 # executes the LOLcode file if the filename is not empty
@@ -61,7 +63,7 @@ def getOutput():
         # this will print the output of the LOLcode file
         textOut = ""
         for text in data[2]:
-            textOut += text + "\n"
+            textOut += text
 
         outputText.config(state = NORMAL)
         outputText.delete(1.0, END)

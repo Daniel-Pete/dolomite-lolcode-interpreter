@@ -13,10 +13,10 @@ HAI
 
 
   BTW printing of variables and use of GIMMEH
-  I HAS A input 
+  I HAS A input
   VISIBLE "gif imput "
   GIMMEH input
   VISIBLE input
-  VISIBLE "u gif meh " input
+  VISIBLE "u gif meh " input "!"
 
 KTHXBYE
