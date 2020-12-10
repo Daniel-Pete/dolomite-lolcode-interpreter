@@ -12,10 +12,11 @@ R_VARIDENT = "([a-zA-Z]+[a-zA-Z0-9\_]*)"
 R_WIN = "WIN"
 R_FAIL = "FAIL"
 R_TROOF = "^WIN$|^FAIL$"
+R_BOOLEAN = "^True$|^False$"
 
 
 # Variable Declaration, Initialization, Assignment
-R_IHA = "(\s*)(I HAS A) ([a-zA-Z]+[a-zA-Z0-9\_]*)(^\s$)"
+R_IHA = "(\s*)(I HAS A) ([a-zA-Z]+[a-zA-Z0-9\_]*)"
 R_IHAI = "(\s*)(I HAS A) ([a-zA-Z]+[a-zA-Z0-9\_]*) (ITZ) ([a-zA-Z\s]+[a-zA-Z0-9\_\s]*|-?[0-9]*\.[0-9]+|-?[0-9]+|\"[^\"]*\"|WIN|FAIL)"
 R_ASS = "(\s*)([a-zA-Z]+[a-zA-Z0-9\_]*) (R) ([a-zA-Z\s]+[a-zA-Z0-9\_\s]*|-?[0-9]*\.[0-9]+|-?[0-9]+|\"[^\"]*\"|WIN|FAIL)"
 
@@ -48,27 +49,28 @@ R_SMOOSH = "(\s*)(SMOOSH) (.*)"
 
 
 # Comparison Operations
-RE_EQUAL_Comparison = "(\s*)(BOTH SAEM) ([^AN]*) (AN) (.*)"
-RE_NOTEQUAL_Comparison = "(\s*)(DIFFRINT) ([^AN]*) (AN) (.*)"
+R_EQUAL_COMPARISON = "(\s*)(.*)(BOTH SAEM) ([^ ]*) (AN) ([^ ]*)(.*)"
+R_NOTEQUAL_COMPARISON = "(\s*)(.*)(DIFFRINT) ([^ ]*) (AN) ([^ ]*)(.*)"
 
 # Arithmetic Operations
-RE_ADDITION = "(\s*)(SUM OF) (.*) (AN) (.*)"
-RE_SUBTRACTION = "(\s*)(DIFF OF) (.*) (AN) (.*)"
-RE_MULTIPLICATION = "(\s*)(PRODUKT OF) (.*) (AN) (.*)"
-RE_DIVISION = "(\s*)(QUOSHUNT OF) (.*) (AN) (.*)"
-RE_MODULO = "(\s*)(MOD OF) (.*) (AN) (.*)"
-RE_MAX = "(\s*)(BIGGR OF) (.*) (AN) (.*)"
-RE_MIN = "(\s*)(SMALLR OF) (.*) (AN) (.*)"
+R_ADDITION = "(\s*)(.*)(SUM OF) ([^ ]*) (AN) ([^ ]*)(.*)"
+R_SUBTRACTION = "(\s*)(.*)(DIFF OF) ([^ ]*) (AN) ([^ ]*)(.*)"
+R_MULTIPLICATION = "(\s*)(.*)(PRODUKT OF) ([^ ]*) (AN) ([^ ]*)(.*)"
+R_DIVISION = "(\s*)(.*)(QUOSHUNT OF) ([^ ]*) (AN) ([^ ]*)(.*)"
+R_MODULO = "(\s*)(.*)(MOD OF) ([^ ]*) (AN) ([^ ]*)(.*)"
+R_MAX = "(\s*)(.*)(BIGGR OF) ([^ ]*) (AN) ([^ ]*)(.*)"
+R_MIN = "(\s*)(.*)(SMALLR OF) ([^ ]*) (AN) ([^ ]*)(.*)"
 
 # Boolean Operations
-RE_AND = "(\s*)(BOTH OF) ([^ ]*) (AN) (.*)"
-RE_OR = "(\s*)(EITHER OF) ([^ ]*) (AN) (.*)"
-RE_XOR = "(\s*)(WON OF) ([^ ]*) (AN) (.*)"
-RE_NOT = "(\s*)(NOT) (.*)"
-RE_INFINITE_AND = "(\s*)(ALL OF) (.*)"
-RE_INFINITE_OR = "(\s*)(ANY OF) (.*)"
-RE_INFBOOL_CONNECTOR = "([^ ]*) (AN) (.*)"
-RE_INFBOOL_DELIMITER = "^MKAY$"
+R_AND = "(\s*)(.*)(BOTH OF) ([^ ]*) (AN) ([^ ]*)(.*)"
+R_OR = "(\s*)(.*)(EITHER OF) ([^ ]*) (AN) ([^ ]*)(.*)"
+R_XOR = "(\s*)(.*)(WON OF) ([^ ]*) (AN) ([^ ]*)(.*)"
+R_NOT = "(\s*)(.*)(NOT) ([^ ]*)(.*)"
+R_INFINITE_AND = "(\s*)(ALL OF) ([^ ]*) (AN) ([^ ]*)(.*)"
+R_INFAND_BASE = "^(\s*)(ALL OF) ([^ ]*)$"
+R_INFINITE_OR = "(\s*)(ANY OF) ([^ ]*) (AN) ([^ ]*)(.*)"
+R_INFOR_BASE = "^(\s*)(ANY OF) ([^ ]*)$"
+
 
 # Classification Constants
 VAR_DEC = "Variable Declaration"

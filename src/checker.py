@@ -1,9 +1,8 @@
 import re
 from regex import *
 
-global ERROR
+global ERROR, PRINT_FLAG
 ERROR = SYNTAX_ERROR
-
 
 tokens = []
 variables = {}
@@ -18,7 +17,6 @@ def is_empty(line):
 def is_statement(line):
 
     if is_var_initialize(line):
-
         return True
 
     elif is_var_declare(line):
@@ -32,17 +30,16 @@ def is_statement(line):
           is_comment(line) or
           is_smoosh(line) or
           is_empty(line)):
+
         return True
 
     elif (is_multicomment_a(line) or
           is_multicomment_b(line)):
         
-
         return True
 
-    elif is_expression(line) != None:
 
-
+    elif is_expression(line):
         return True
     
     return False
@@ -68,12 +65,7 @@ def is_var_initialize(line):
             tokens.append([VAR_ASS, str(match[3])])
 
 
-        if is_expression(match[4]):
-
-            variables[match[2]] = variables[IT]
-            return True
-
-        elif re.match(R_WIN, str(match[4])):
+        if re.match(R_WIN, str(match[4])):
             tokens.append([TROOF_LIT, match[4]])
             variables[str(match[2])] = str(match[4])
             return True
@@ -112,6 +104,11 @@ def is_var_initialize(line):
         elif re.match(R_NUMBR, match[4]):
 
             tokens.append([NBAR_LIT, match[4]])
+
+        elif is_expression(match[4]):
+
+            variables[match[2]] = variables[IT]
+            return True
 
         variables[str(match[2])] = match[4]
 
@@ -447,13 +444,7 @@ def is_documentation(line):
 
 def concatenation(match):
 
-
     NEWLINE_FLAG = False
-
-
-    if is_expression(match):
-        print(variables[IT])
-        return "EXPRESSION"
 
     floats = re.findall(R_NUMBAR, match)
     ints = re.findall(R_NUMBR, match)
@@ -468,19 +459,13 @@ def concatenation(match):
     # will be split using '"'. Otherwise, it will
     # be split with space.
 
-    
-
     if '"' in match:
         to_concat = [str(i) for i in match.split('"') if i != '']
     else:
         to_concat = [str(i).strip() for i in match.split() if i != '']
-
-
     
-    if to_concat[-1].strip() == '!':
+    if to_concat[-1].strip() == '!': 
         NEWLINE_FLAG = True
-        
-    
     
     for i, j in enumerate(to_concat):
 
@@ -512,7 +497,7 @@ def concatenation(match):
             if variables[i] != None:
                 concat.append(variables[i])
             else:
-                return
+                return "UNDEFINED"
 
         elif (i in strings or
                 i in ints or
@@ -523,10 +508,11 @@ def concatenation(match):
             concat.append(i)
 
         else:
+
             if NEWLINE_FLAG == True:
                 continue
             else:
-                return 
+                return "UNDEFINED"
 
     return (concat, NEWLINE_FLAG)
 
@@ -571,8 +557,9 @@ def is_print(line):
 
         concat = concatenation(match[2])
 
-        if concat == "EXPRESSION":
-            return True
+        if concat == "UNDEFINED":
+
+            return False
 
         elif concat:
 
@@ -584,753 +571,347 @@ def is_print(line):
             return True
 
         else:
-            return False
 
-    except:
-        pass
 
-    return False
+            try:
+                is_expression(match[2])
+                return True
+            except:
+                return False
 
 
-
-# Functions from Ged's Branch
-# Used for parsing expressions
-
-def is_equal_comparison(line, expression):
-
-    try:
-        category = ""
-        x = re.match(RE_EQUAL_Comparison, line).groups()
-
-        expression += "("
-
-        if(is_min_or_max(x[2]) != False):
-            category = is_min_or_max(x[2])
-
-        tokens.append([category+EQ_OP, x[1]])
-
-        op1_exp = arithmetic_type_checker(x[2], expression)
-        if(op1_exp == False):
-            return False
-        else:
-            expression = op1_exp[1]
-            expression += op1_exp[0]
-
-        tokens.append([EQ_COM_CXT, x[3]])
-        expression += " == "
-
-        op2_exp = arithmetic_type_checker(x[4], expression)
-        if(op2_exp == False):
-            return False
-        else:
-            expression = op2_exp[1]
-            expression += op2_exp[0]
-
-        expression += ")"
-
-        return(expression)
-    except:
-        pass
-
-    return False
-
-
-def is_notequal_comparison(line, expression):
-
-    try:
-
-        category = ""
-        x = re.match(RE_NOTEQUAL_Comparison, line).groups()
-
-        expression += "("
-        if(is_min_or_max(x[2]) != False):
-            category = is_min_or_max(x[2])
-
-        if category == "":
-            category = "NE"
-        elif category == "LT":
-            category = "GT"
-        elif category == "GT":
-            category = "LT"
-
-        tokens.append([category+COM_OP, x[1]])
-
-        op1_exp = arithmetic_type_checker(x[2], expression)
-        if(op1_exp == False):
-            return False
-        else:
-            expression = op1_exp[1]
-            expression += op1_exp[0]
-
-        tokens.append([category+COM_CXT, x[3]])
-        expression += " != "
-
-        op2_exp = arithmetic_type_checker(x[4], expression)
-        if(op2_exp == False):
-            return False
-        else:
-            expression = op2_exp[1]
-            expression += op2_exp[0]
-
-        expression += ")"
-
-        return(expression)
-
-    except:
-        pass
-
-    return False
-
-
-def is_min_or_max(line):
-
-    if re.match(RE_MAX, line):
-        return "GT"
-    elif re.match(RE_MIN, line):
-        return "LT"
-
-    return False
-
-
-def is_addition(line, expression):
-
-    try:
-
-        x = re.match(RE_ADDITION, line).groups()
-        tokens.append([ADD_OP, x[1]])
-
-        expression += "("
-        op1_exp = arithmetic_type_checker(x[2], expression)
-        if(op1_exp == False):
-            return False
-        else:
-            expression = op1_exp[1]
-            expression += op1_exp[0]
-
-        tokens.append([ADD_CXT, x[3]])
-        expression += "+"
-
-        op2_exp = arithmetic_type_checker(x[4], expression)
-        if(op2_exp == False):
-            return False
-        else:
-            expression = op2_exp[1]
-            expression += op2_exp[0]
-
-        expression += ")"
-
-        return(expression)
-
-    except:
-        pass
-
-    return False
-
-
-def is_subtraction(line, expression):
-
-    try:
-        
-        x = re.match(RE_SUBTRACTION, line).groups()
-        tokens.append([SUB_OP, x[1]])
-
-        expression += "("
-        op1_exp = arithmetic_type_checker(x[2], expression)
-        if(op1_exp == False):
-            return False
-        else:
-            expression = op1_exp[1]
-            expression += op1_exp[0]
-
-        tokens.append([SUB_CXT, x[3]])
-        expression += "-"
-
-        op2_exp = arithmetic_type_checker(x[4], expression)
-        if(op2_exp == False):
-            return False
-        else:
-            expression = op2_exp[1]
-            expression += op2_exp[0]
-
-        expression += ")"
-
-        return(expression)
-
-    except:
-
-        pass
-
-    return False
-
-
-def is_multiplication(line, expression):
-
-    try:
-
-        x = re.match(RE_MULTIPLICATION, line).groups()
-        tokens.append([MUL_OP, x[1]])
-
-        expression += "("
-        op1_exp = arithmetic_type_checker(x[2], expression)
-        if(op1_exp == False):
-            return False
-        else:
-            expression = op1_exp[1]
-            expression += op1_exp[0]
-
-        tokens.append([MUL_CXT, x[3]])
-        expression += "*"
-
-        op2_exp = arithmetic_type_checker(x[4], expression)
-
-        if(op2_exp == False):
-            return False
-
-        else:
-            expression = op2_exp[1]
-            expression += op2_exp[0]
-
-        expression += ")"
-
-        return(expression)
-    except:
-        pass
-
-    return False
-
-
-def is_division(line, expression):
-
-    try:
-        x = re.match(RE_DIVISION, line).groups()
-        tokens.append([DIV_OP, x[1]])
-
-        expression += "("
-        op1_exp = arithmetic_type_checker(x[2], expression)
-        if(op1_exp == False):
-            return False
-        else:
-            expression = op1_exp[1]
-            expression += op1_exp[0]
-
-        tokens.append([DIV_CXT, x[3]])
-        expression += "/"
-
-        op2_exp = arithmetic_type_checker(x[4], expression)
-        if(op2_exp == False):
-            return False
-        else:
-            expression = op2_exp[1]
-            expression += op2_exp[0]
-
-        expression += ")"
-
-        return(expression)
-
-    except:
-        pass
-
-    return False
-
-
-def is_max(line, expression):
-
-    try:
-
-        x = re.match(RE_MAX, line).groups()
-        tokens.append([MAX_OP, x[1]])
-
-        expression += "("
-        op1_exp = arithmetic_type_checker(x[2], expression)
-        if(op1_exp == False):
-            return False
-        else:
-            expression = op1_exp[1]
-            expression += "max("+op1_exp[0]
-
-        tokens.append([MAX_CXT, x[3]])
-        expression += ","
-
-        op2_exp = arithmetic_type_checker(x[4], expression)
-        if(op2_exp == False):
-            return False
-        else:
-            expression = op2_exp[1]
-            expression += op2_exp[0]+")"
-
-        expression += ")"
-
-        return(expression)
-    except:
-        pass
-
-    return False
-
-
-def is_min(line, expression):
-    try:
-        x = re.match(RE_MIN, line).groups()
-        tokens.append([MIN_OP, x[1]])
-
-        expression += "("
-        op1_exp = arithmetic_type_checker(x[2], expression)
-        if(op1_exp == False):
-            return False
-        else:
-            expression = op1_exp[1]
-            expression += "min("+op1_exp[0]
-
-        tokens.append([MIN_CXT, x[3]])
-        expression += ","
-
-        op2_exp = arithmetic_type_checker(x[4], expression)
-
-        if(op2_exp == False):
-            return False
-
-        else:
-            expression = op2_exp[1]
-            expression += op2_exp[0]+")"
-
-        expression += ")"
-
-        return(expression)
-    except:
-        pass
-
-    return False
-
-# fxn to check and handle arguments/operands
-# of arithmetic operations
-
-
-def arithmetic_type_checker(line, expression):
-
-    # Check first if it's an arithmetic operation 
-    # and will recall the fxn to handle them
-
-    summ = is_addition(line, expression)
-    if summ != False:
-        return(["", summ])
-
-    diff = is_subtraction(line, expression)
-    if diff != False:
-        return(["", diff])
-
-    prod = is_multiplication(line, expression)
-    if prod != False:
-        return(["", prod])
-
-    quot = is_division(line, expression)
-    if quot != False:
-        return(["", quot])
-
-    maxed = is_max(line, expression)
-    if maxed != False:
-        return(["", maxed])
-
-    mined = is_min(line, expression)
-    if mined != False:
-        return(["", mined])
-
-    equaled = is_equal_comparison(line, expression)
-    if equaled != False:
-        return(["", equaled])
-
-    notequaled = is_notequal_comparison(line, expression)
-    if notequaled != False:
-        return(["", notequaled])
-
-    # line/string is either a literal or variable
-    if re.match(R_STR, line):
-        new = line.strip('"')
-        tokens.append([STR_LIT, new])
-        return([str(new), expression])
-
-    elif re.match(R_NUMBAR, line):
-        tokens.append([NBAR_LIT, line])
-        return([str(line), expression])
-
-    elif re.match(R_NUMBR, line):
-        tokens.append([NBR_LIT, line])
-        return([str(line), expression])
-
-    elif re.match(R_VARIABLE, line):
-        if variables.__contains__(line):
-            tokens.append([VAR_IDENT, line])
-            return([str(variables[line]), expression])
-
-    # if no matches == invalid data type 
-    # for arithmetic operations
-
-    else:
         return False
 
-# Boolean Operations
-
-
-def is_and(line, mode, expression):
-    try:
-
-        x = re.match(RE_AND, line).groups()
-        tokens.append([AND_OP, x[1]])
-
-        expression += "("
-        op1_exp = boolean_type_checker(x[2], 0, expression)
-
-        if(op1_exp == False):
-            return False
-        else:
-            expression = op1_exp[1]
-            expression += op1_exp[0]
-
-        tokens.append([AND_CXT, x[3]])
-        expression += " and "
-        op2_exp = boolean_type_checker(x[4], mode, expression)
-
-        if(op2_exp == False):
-            return False
-        else:
-            expression = op2_exp[1]
-            expression += op2_exp[0]
-
-        if mode == 0:
-            expression += ")"
-
-        return(expression)
-
     except:
         pass
 
     return False
 
 
-def is_or(line, mode, expression):
-
-    try:
-
-        x = re.match(RE_OR, line).groups()
-        tokens.append([OR_OP, x[1]])
-
-        expression += "("
-        op1_exp = boolean_type_checker(x[2], 0, expression)
-
-        if(op1_exp == False):
-            return False
-        else:
-            expression = op1_exp[1]
-            expression += op1_exp[0]
-
-        tokens.append([OR_CXT, x[3]])
-        expression += " or "
-        op2_exp = boolean_type_checker(x[4], mode, expression)
-
-        if(op2_exp == False):
-            return False
-        else:
-            expression = op2_exp[1]
-            expression += op2_exp[0]
-
-        if mode == 0:
-            expression += ")"
-
-        return(expression)
-    except:
-        pass
-
-    return False
-
-
-def is_xor(line, mode, expression):
-
-    try:
-
-        x = re.match(RE_XOR, line).groups()
-        tokens.append([XOR_OP, x[1]])
-
-        expression += "("
-        op1_exp = boolean_type_checker(x[2], 0, expression)
-
-        if(op1_exp == False):
-            return False
-        else:
-            expression = op1_exp[1]
-            expression += op1_exp[0]
-
-        tokens.append([XOR_CXT, x[3]])
-        expression += " ^ "
-        op2_exp = boolean_type_checker(x[4], mode, expression)
-
-        if(op2_exp == False):
-            return False
-        else:
-            expression = op2_exp[1]
-            expression += op2_exp[0]
-
-        if mode == 0:
-            expression += ")"
-
-        return(expression)
-
-    except:
-        pass
-
-    return False
-
-
-def is_not(line, mode, expression):
-
-    try:
-
-        x = re.match(RE_NOT, line).groups()
-
-        tokens.append([NOT_OP, x[1]])
-        expression += "("
-        op1_exp = boolean_type_checker(x[2], 0, expression)
-
-        if(op1_exp == False):
-            return False
-        else:
-            expression = op1_exp[1]
-            expression += "not " + op1_exp[0]
-
-        if mode == 0:
-            expression += ")"
-
-        return(expression)
-
-    except:
-        pass
-
-    return False
-
-
-def is_infinite_and(line, expression):
-    try:
-
-        x = re.match(RE_INFINITE_AND, line).groups()
-        tokens.append([INF_AND_OP, x[1]])
-        op1_exp = boolean_type_checker(x[2], "And", expression)
-        if(op1_exp == False):
-            return False
-        else:
-            expression = op1_exp[1]
-            expression += op1_exp[0]
-
-        return(expression)
-        
-    except:
-        pass
-
-    return False
-
-
-def is_infinite_or(line, expression):
-    try:
-        x = re.match(RE_INFINITE_OR, line).groups()
-        tokens.append([INF_AND_OP, x[1]])
-        op1_exp = boolean_type_checker(x[2], "Or", expression)
-        if(op1_exp == False):
-            return False
-        else:
-            expression = op1_exp[1]
-            expression += op1_exp[0]
-
-        return(expression)
-    except:
-        pass
-
-    return False
-
-# fxn to check and handle arguments/operands 
-# of boolean operations
-
-
-def boolean_type_checker(line, mode, expression):
-
-    # Check if line/string is either a 
-    # troof literal or variable
-
-    if re.match(R_TROOF, line):
-        tokens.append([TROOF_LIT, line])
-        return([str(line), expression])
-
-    if re.match(R_VARIABLE, line):
-        if variables.__contains__(line):
-            tokens.append([VAR_IDENT, line])
-            return([str(variables[line]), expression])
-
-    # To handle last 2 strings 
-    # (literal/variable and delimiter)
-
-    end_strings = line.split(" ")
-
-    if len(end_strings) == 2:
-
-        if re.match(R_TROOF, end_strings[0]):
-            tokens.append([TROOF_LIT, end_strings[0]])
-            arg1 = str(end_strings[0])
-
-        elif re.match(R_VARIABLE, end_strings[0]):
-
-            # Check if variable exists in 
-            # variables dictionary
-
-            if variables.__contains__(end_strings[0]):
-                tokens.append([VAR_IDENT, end_strings[0]])
-                arg1 = str(variables[end_strings[0]])
-
-            # Variable referenced does not exist
-            else:
-                return False
-
-        if re.match(RE_INFBOOL_DELIMITER, end_strings[1]):
-            tokens.append(["Infinite "+mode+" Delimiter", end_strings[1]])
-
-        return([arg1 + ")", expression])
-
-    elif(mode == 0):
-
-        # Mode 0 expects 1 troof literal only, 
-        # otherwise it's an error
-
-        return False       
-
-    # Check if line/string is a boolean operation and 
-    # will recall the fxn to handle them
-
-    anded = is_and(line, mode, expression)
-    if anded != False:
-        return(["", anded])
-
-    ored = is_or(line, mode, expression)
-    if ored != False:
-        return(["", ored])
-
-    xored = is_xor(line, mode, expression)
-    if xored != False:
-        return(["", xored])
-
-    noted = is_not(line, mode, expression)
-    if noted != False:
-        return(["", noted])
-
-    # To handle the AN connector 
-    # for infinite arity
-
-    try:
-
-        x = re.match(RE_INFBOOL_CONNECTOR, line).groups()
-        op1_exp = boolean_type_checker(x[0], 0, expression)
-
-        if(op1_exp == False):
-            return False
-
-        else:
-
-            tokens.append([mode+" Connector", x[1]])
-            expression = op1_exp[1]
-            expression += op1_exp[0] + ") " + mode.lower() + " "
-            op2_exp = boolean_type_checker(x[2], mode, expression)
-
-            if(op2_exp == False):
-                return False
-            else:
-                expression = op2_exp[1]
-                expression += op2_exp[0]
-                return(["", expression])
-
-    except:
-        pass
-
-    return False
-
-
-# fxn that checks if the line is an 
-# expression and returns the evaluated result
-
-def is_expression(line):
-
-    add = is_addition(line, "")
-    if add:
-        variables[IT] = str(eval(add))
-        return True
-
-    diff = is_subtraction(line, "")
-    if diff:
-        variables[IT] = str(eval(diff))
-        return True
-
-    prod = is_multiplication(line, "")
-    if prod:
-        variables[IT] = str(eval(prod))
-        return True
-
-    quot = is_division(line, "")
-    if quot:
-        variables[IT] = str(eval(quot))
-        return True
-
-    maxed = is_max(line, "")
-    if maxed:
-        variables[IT] = str(eval(maxed))
-        return True
-
-    mined = is_min(line, "")
-    if mined:
-        variables[IT] = str(eval(mined))
-        return True
-
-    equal = is_equal_comparison(line, "")
-    if equal:
-        variables[IT] = str(eval(equal))
-        return True
-
-    notequal = is_notequal_comparison(line, "")
-    if notequal:
-        variables[IT] = str(eval(notequal))
-        return True
-
-    anded = is_and(line, 0, "")
-    if anded:
-        anded = process_bool(anded)
-        variables[IT] = str(eval(anded))
-        return True
-
-    ored = is_or(line, 0, "")
-    if ored:
-        ored = process_bool(ored)
-        variables[IT] = str(eval(ored))
-        return True
-
-    xored = is_xor(line, 0, "")
-    if xored:
-        xored = process_bool(xored)
-        variables[IT] = str(eval(xored))
-        return True
-
-    noted = is_not(line, 0, "")
-    if noted:
-        noted = process_bool(noted)
-        variables[IT] = str(eval(noted))
-        return True
-
-    infanded = is_infinite_and(line, "")
-    if infanded:
-        infanded = process_bool(infanded)
-        variables[IT] = str(eval(infanded))
-        return True
-
-    infored = is_infinite_or(line, "")
-    if infored:
-        infored = process_bool(infored)
-        variables[IT] = str(eval(infored))
-        return True
+def solve_arithmetic(exp):
+
+    if re.match(R_NUMBAR, exp) or re.match(R_NUMBR, exp):
+        return(eval(exp))
+
+    # Check if Addition
+    if re.match(R_ADDITION, exp):
+        groups = re.match(R_ADDITION, exp).groups()
+
+        arg1 = check_aritharg(groups[3])
+        arg2 = check_aritharg(groups[5])
+        if arg1 != None and arg2 != None:
+            result = arg1+arg2
+            return(solve_arithmetic(groups[1]+str(result)+groups[6]))
+
+    # Check if SUBTRACTION
+    if re.match(R_SUBTRACTION, exp):
+        groups = re.match(R_SUBTRACTION, exp).groups()
+
+        arg1 = check_aritharg(groups[3])
+        arg2 = check_aritharg(groups[5])
+        if arg1 != None and arg2 != None:
+            result = arg1-arg2
+            return(solve_arithmetic(groups[1]+str(result)+groups[6]))
+
+    # Check if MULTIPLICATION
+    if re.match(R_MULTIPLICATION, exp):
+        groups = re.match(R_MULTIPLICATION, exp).groups()
+
+        arg1 = check_aritharg(groups[3])
+        arg2 = check_aritharg(groups[5])
+        if arg1 != None and arg2 != None:
+            result = arg1*arg2
+            return(solve_arithmetic(groups[1]+str(result)+groups[6]))
+
+    # Check if DIVISION
+    if re.match(R_DIVISION, exp):
+        groups = re.match(R_DIVISION, exp).groups()
+
+        arg1 = check_aritharg(groups[3])
+        arg2 = check_aritharg(groups[5])
+        if arg1 != None and arg2 != None:
+            result = arg1/arg2
+            return(solve_arithmetic(groups[1]+str(result)+groups[6]))
+
+    # Check if MODULO
+    if re.match(R_MODULO, exp):
+        groups = re.match(R_MODULO, exp).groups()
+
+        arg1 = check_aritharg(groups[3])
+        arg2 = check_aritharg(groups[5])
+        if arg1 != None and arg2 != None:
+            result = arg1 % arg2
+            return(solve_arithmetic(groups[1]+str(result)+groups[6]))
+
+    # Check if MAX
+    if re.match(R_MAX, exp):
+        groups = re.match(R_MAX, exp).groups()
+
+        arg1 = check_aritharg(groups[3])
+        arg2 = check_aritharg(groups[5])
+        if arg1 != None and arg2 != None:
+            result = max(arg1, arg2)
+            return(solve_arithmetic(groups[1]+str(result)+groups[6]))
+
+    # Check if MIN
+    if re.match(R_MIN, exp):
+        groups = re.match(R_MIN, exp).groups()
+
+        arg1 = check_aritharg(groups[3])
+        arg2 = check_aritharg(groups[5])
+        if arg1 != None and arg2 != None:
+            result = min(arg1, arg2)
+            return(solve_arithmetic(groups[1]+str(result)+groups[6]))
 
     return None
 
-# Tool fxn 
-# to process
+
+def solve_boolean(exp):
+
+    # Base case
+    if re.match(R_BOOLEAN, exp):
+        if exp == "True":
+            return("WIN")
+        elif exp == "False":
+            return("FAIL")
+
+    # Base case for infinite and
+    if re.match(R_INFAND_BASE, exp):
+        groups = re.match(R_INFAND_BASE, exp).groups()
+        arg = check_boolarg(groups[2])
+
+        if arg != None:
+            if arg == True:
+                return("WIN")
+            elif arg == False:
+                return("FAIL")
+
+    # Base case for infinite or
+    if re.match(R_INFOR_BASE, exp):
+        groups = re.match(R_INFOR_BASE, exp).groups()
+        arg = check_boolarg(groups[2])
+
+        if arg != None:
+            if arg == True:
+                return("WIN")
+            elif arg == False:
+                return("FAIL")
+
+    # Check if "not" boolean operation
+    if re.match(R_NOT, exp):
+        groups = re.match(R_NOT, exp).groups()
+
+        arg1 = check_boolarg(groups[3])
+        if arg1 != None:
+            result = not arg1
+            return(solve_boolean(groups[1]+str(result)+groups[4]))
+
+    # Check if "and" boolean operation
+    if re.match(R_AND, exp):
+        groups = re.match(R_AND, exp).groups()
+
+        arg1 = check_boolarg(groups[3])
+        arg2 = check_boolarg(groups[5])
+        if arg1 != None and arg2 != None:
+            result = arg1 and arg2
+            return(solve_boolean(groups[1]+str(result)+groups[6]))
+
+    # Check if "or" boolean operation
+    if re.match(R_OR, exp):
+        groups = re.match(R_OR, exp).groups()
+
+        arg1 = check_boolarg(groups[3])
+        arg2 = check_boolarg(groups[5])
+        if arg1 != None and arg2 != None:
+            result = arg1 or arg2
+            return(solve_boolean(groups[1]+str(result)+groups[6]))
+
+    # Check if "xor" boolean operation
+    if re.match(R_XOR, exp):
+        groups = re.match(R_XOR, exp).groups()
+
+        arg1 = check_boolarg(groups[3])
+        arg2 = check_boolarg(groups[5])
+        if arg1 != None and arg2 != None:
+            result = arg1 ^ arg2
+            return(solve_boolean(groups[1]+str(result)+groups[6]))
+
+    # Check if "and" boolean operation
+    if re.match(R_INFINITE_AND, exp):
+        groups = re.match(R_INFINITE_AND, exp).groups()
+
+        arg1 = check_boolarg(groups[2])
+        arg2 = check_boolarg(groups[4])
+        if arg1 != None and arg2 != None:
+            result = arg1 and arg2
+            return(solve_boolean(groups[1]+" "+str(result)+groups[5]))
+
+    # Check if "and" boolean operation
+    if re.match(R_INFINITE_OR, exp):
+        groups = re.match(R_INFINITE_OR, exp).groups()
+
+        arg1 = check_boolarg(groups[2])
+        arg2 = check_boolarg(groups[4])
+        if arg1 != None and arg2 != None:
+            result = arg1 or arg2
+            return(solve_boolean(groups[1]+" "+str(result)+groups[5]))
+
+    return None
+
+
+def solve_comparison(exp):
+
+    # Base case
+    if re.match(R_BOOLEAN, exp):
+        if exp == "True":
+            return("WIN")
+        elif exp == "False":
+            return("FAIL")
+
+    # Check if MAX
+    if re.match(R_MAX, exp):
+        groups = re.match(R_MAX, exp).groups()
+
+        arg1 = check_aritharg(groups[3])
+        arg2 = check_aritharg(groups[5])
+        if arg1 != None and arg2 != None:
+            result = max(arg1, arg2)
+            return(solve_comparison(groups[1]+str(result)+groups[6]))
+
+    # Check if MIN
+    if re.match(R_MIN, exp):
+        groups = re.match(R_MIN, exp).groups()
+
+        arg1 = check_aritharg(groups[3])
+        arg2 = check_aritharg(groups[5])
+        if arg1 != None and arg2 != None:
+            result = min(arg1, arg2)
+            return(solve_comparison(groups[1]+str(result)+groups[6]))
+
+    # Check if Equal
+    if re.match(R_EQUAL_COMPARISON, exp):
+        groups = re.match(R_EQUAL_COMPARISON, exp).groups()
+
+        arg1 = check_comparg(groups[3])
+        arg2 = check_comparg(groups[5])
+        if arg1 != None and arg2 != None:
+            if type(arg1) != type(arg2):
+                return("FAIL")
+            result = arg1 == arg2
+            return(solve_comparison(groups[1]+str(result)+groups[6]))
+
+    # Check if Not Equal
+    if re.match(R_NOTEQUAL_COMPARISON, exp):
+        groups = re.match(R_NOTEQUAL_COMPARISON, exp).groups()
+
+        arg1 = check_comparg(groups[3])
+        arg2 = check_comparg(groups[5])
+        if arg1 != None and arg2 != None:
+            if type(arg1) != type(arg2):
+                return("FAIL")
+            result = arg1 != arg2
+            return(solve_comparison(groups[1]+str(result)+groups[6]))
+
+    return None
+
+
+def check_aritharg(arg):
+    # line/string is either a literal or variable
+    if re.match(R_STR, arg):
+        new = arg.strip('"')
+        # tokens.append(["String Literal", new])
+        return(str(new))
+
+    elif re.match(R_NUMBAR, arg):
+        # tokens.append(["Numbar Literal", arg])
+        return(eval(arg))
+
+    elif re.match(R_NUMBR, arg):
+        # tokens.append(["Numbr Literal", arg])
+        return(eval(arg))
+
+    elif re.match(R_VARIABLE, arg):
+        if variables.__contains__(arg):
+            # tokens.append(["Variable Identifier", arg])
+            return(eval(variables[arg]))
+
+    return None
+
+
+def check_boolarg(arg):
+    if re.match(R_BOOLEAN, arg):
+        return(eval(arg))
+
+    elif re.match(R_VARIABLE, arg):
+        if variables.__contains__(arg):
+            if variables[arg] == "WIN":
+                return True
+            elif variables[arg] == "FAIL":
+                return False
+            # tokens.append(["Variable Identifier", arg])
+            return(eval(variables[arg]))
+
+        
+
+    return None
+
+
+def check_comparg(arg):
+    retarg = check_aritharg(arg)
+    if retarg != None:
+        return retarg
+    retarg = check_boolarg(arg)
+    if retarg != None:
+        return retarg
+
+    return None
+
+# fxn that checks if the line is an expression and returns the evaluated result
+
+
+def is_expression(line):
+
+    # Check if literal/variable only
+    aritharg = check_aritharg(line.strip(" "))
+
+    if aritharg:        
+        variables[IT] = str(aritharg)
+        return True
+
+    # arithmetic is final evaluated arithmetic expression
+    arithmethic = solve_arithmetic(line)
+
+    # Valid arithmetic expression
+    if arithmethic != None:
+        variables[IT] = str(arithmethic)
+        return True
+
+    # boolean is final evaluated boolean expression
+    boolline = line
+    boolline = boolline.replace("WIN", "True")
+    boolline = boolline.replace("FAIL", "False")
+
+    boolean = solve_boolean(boolline)
+
+    # Valid boolean expression
+    if boolean != None:
+        variables[IT] = str(boolean)
+        return True
+
+    # compare is final evaluated compare expression
+
+    compare = solve_comparison(line)
+
+    # Valid comparison expression
+    if compare != None:
+        variables[IT] = str(compare)
+        return True
+
+    # Invalid Expression
+    return False
+
+# Tool fxn to process
+
 
 def process_bool(line):
     line = line.replace("WIN", "True")

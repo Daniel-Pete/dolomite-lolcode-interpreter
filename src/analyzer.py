@@ -2,8 +2,8 @@ from printer import *
 
 file = "lolcode/sample.lol"
 
-global TOGGLE, SUBTOGGLE, CONTROL_FLAG, CASE_FLAG
-global MATCHED_FLAG, GTFO_FLAG
+global TOGGLE, SUBTOGGLE, CONTROL_FLAG
+global CASE_FLAG, MATCHED_FLAG, GTFO_FLAG
 
 TOGGLE = START
 SUBTOGGLE = START
@@ -26,16 +26,17 @@ def start_grammar(line):
 
     return False
 
-
 def statement_grammar(line):
 
     global TOGGLE, SUBTOGGLE, CONTROL_FLAG
 
-    if is_statement(line):
+    
+
+    if is_bye(line):
+        TOGGLE = END
         return True
 
-    elif is_bye(line):
-        TOGGLE = END
+    elif is_statement(line):
         return True
 
     elif is_if_then(line):
