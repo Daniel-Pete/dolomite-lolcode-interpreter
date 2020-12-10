@@ -28,8 +28,8 @@ R_OMG = "(\s*)(OMG) (-?[0-9]*\.[0-9])"
 R_OMGWTF = "(\s*)(OMGWTF)"
 
 # Comparison Operations
-R_EQUAL_Comparison = "(\s*)(BOTH SAEM) ([^AN]*) (AN) (.*)"
-R_NOTEQUAL_Comparison = "(\s*)(DIFFRINT) ([^AN]*) (AN) (.*)"
+R_EQUAL_COMPARISON = "(\s*)(.*)(BOTH SAEM) ([^ ]*) (AN) ([^ ]*)(.*)"
+R_NOTEQUAL_COMPARISON = "(\s*)(.*)(DIFFRINT) ([^ ]*) (AN) ([^ ]*)(.*)"
 
 # Arithmetic Operations
 R_ADDITION = "(\s*)(.*)(SUM OF) ([^ ]*) (AN) ([^ ]*)(.*)"
@@ -41,18 +41,17 @@ R_MAX = "(\s*)(.*)(BIGGR OF) ([^ ]*) (AN) ([^ ]*)(.*)"
 R_MIN = "(\s*)(.*)(SMALLR OF) ([^ ]*) (AN) ([^ ]*)(.*)"
 
 # Boolean Operations
-R_AND = "(\s*)(BOTH OF) ([^ ]*) (AN) (.*)"
-R_OR = "(\s*)(EITHER OF) ([^ ]*) (AN) (.*)"
-R_XOR = "(\s*)(WON OF) ([^ ]*) (AN) (.*)"
+R_AND = "(\s*)(.*)(BOTH OF) ([^ ]*) (AN) ([^ ]*)(.*)"
+R_OR = "(\s*)(.*)(EITHER OF) ([^ ]*) (AN) ([^ ]*)(.*)"
+R_XOR = "(\s*)(.*)(WON OF) ([^ ]*) (AN) ([^ ]*)(.*)"
 R_NOT = "(\s*)(.*)(NOT) ([^ ]*)(.*)"
-R_INFINITE_AND = "(\s*)(ALL OF) (.*)"
-R_INFINITE_OR = "(\s*)(ANY OF) (.*)"
-R_INFBOOL_CONNECTOR = "([^ ]*) (AN) (.*)"
-R_INFBOOL_DELIMITER = "^MKAY$"
+R_INFINITE_AND = "(\s*)(ALL OF) ([^ ]*) (AN) ([^ ]*)(.*)"
+R_INFAND_BASE = "^(\s*)(ALL OF) ([^ ]*)$"
+R_INFINITE_OR = "(\s*)(ANY OF) ([^ ]*) (AN) ([^ ]*)(.*)"
+R_INFOR_BASE = "^(\s*)(ANY OF) ([^ ]*)$"
 
 #Assignment Operation
 R_ASSIGN = "(\s*)([^ ]*) (R) (.*)"
-
 
 # Classifications
 VAR_DEC = "Variable Declaration"
