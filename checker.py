@@ -325,6 +325,8 @@ def is_end_case(line):
 
 def is_gtfo(line):
 
+    # Checks if line is GTFO
+
     try:
 
         match = re.match(R_GTFO, line).groups()
@@ -518,6 +520,9 @@ def is_print(line):
         concat = concatenation(match[2])
 
         if concat == "UNDEFINED":
+
+            # If UNDEFINED, then interpreter checks 
+            # if it's an expression
 
             try:
                 is_expression(match[2])

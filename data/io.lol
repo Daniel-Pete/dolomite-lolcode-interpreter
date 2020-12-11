@@ -2,7 +2,6 @@ BTW for USER INPUT/OUTPUT
 HAI
 
   BTW printing of literals
-  VISIBLE "henlo"
   VISIBLE 17
   VISIBLE 1.7
   VISIBLE WIN

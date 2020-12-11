@@ -2,13 +2,13 @@
 <h1 align = "center">
     <img src = "images/dolomite.gif">
     <br/>
-    DOLOMITE: LOLCODE Interpreter
+    Dolomite: LOLCODE Interpreter
     <br/>
     <img src = "https://img.shields.io/badge/status-finished-brightgreen.svg"> 
 </h1>
 
 
-Welcome to Dolomite: LOLCODE interpreter. This was developed by the Group Dolomite in fulfillment of their CMSC 124 requirements. The members are Daniel Aguilar, Steven Crespo, and Ged Malabanan from section T-8L under Ma'am Erika Cunanan and Ma'am Bernadette Pelaez.
+Welcome to Dolomite: LOLCODE interpreter. This was developed by Group Dolomite in fulfillment of their CMSC 124 requirements. The members are Daniel Aguilar, Steven Crespo, and Ged Malabanan from section T-8L under Ma'am Erika Cunanan and Ma'am Bernadette Pelaez.
 
 # Dependencies
 This program requires the latest version of Python installed. It is also recommended to run the program in
@@ -34,8 +34,6 @@ You are now ready to run the interpreter. If you are using **Windows**, type the
 If you're using **macOS** or **Linux**, you are required to run the interpreter using the latest version of Python. Running in previous versions may result into an error. Run the interpreter using the command below:
 
 `python3 UI.py`
-
-
 
 # License #
 

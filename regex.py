@@ -113,6 +113,12 @@ CXT = "Connector"
 
 # Error Messages
 SYNTAX_ERROR = "Syntax Error."
+SYNTAX_ERROR_HAI = "Syntax Error: Expected HAI"
+SYNTAX_ERROR_EXPECT = "Syntax Error: Expected Statement"
+SYNTAX_ERROR_EXPECT = "Syntax Error: Expected Statement"
+SYNTAX_ERROR_COMMENT = "Syntax Error: Expected Comment"
+SYNTAX_ERROR_CLOSED = "Syntax Error: File Already Closed With KTHXBYE"
+SYNTAX_ERROR_NOT_CLOSED = "Syntax Error: File Not Closed With KTHXBYE"
 VAR_ERROR = "Undefined Error."
 FILE_ERROR = "File Error: file cannot be found"
 
