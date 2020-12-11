@@ -122,6 +122,7 @@ def is_var_assign(line):
                     return True
 
                 else:
+                    errorList.append("Syntax Error: Variable Does Not Exist")
                     return False
             
             elif re.match(R_NUMBAR, match[3]):

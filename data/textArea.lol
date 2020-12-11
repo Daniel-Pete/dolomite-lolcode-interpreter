@@ -1,21 +1,40 @@
-BTW for USER INPUT/OUTPUT
-
+BTW for arithmetic operations
 HAI
-  BTW printing of literals
-  VISIBLE "henlo"
-  VISIBLE 17
-  VISIBLE 1.7
-  VISIBLE WIN
 
-  BTW infinite arity printing (concat)
-  VISIBLE "hi, I'm pi. My value is " 3.14
-  VISIBLE "brrr " "baaa " "fa la la," " la la"
+  BTW basic expressions
+  SUM OF 1 AN 2
+  VISIBLE IT
+  DIFF OF 1 AN 2
+  VISIBLE IT
+  PRODUKT OF 1 AN 2
+  VISIBLE IT
+  QUOSHUNT OF 1.0 AN 2
+  VISIBLE IT
+  MOD OF 1 AN 2
+  VISIBLE IT
+  BIGGR OF 1 AN 2
+  VISIBLE IT
+  SMALLR OF 1 AN 2
+  VISIBLE IT
 
+  BTW compound expressions
+  SUM OF PRODUKT OF 3 AN 5 AN BIGGR OF DIFF OF 17 AN 2 AN 5
+  VISIBLE IT
+  BIGGR OF PRODUKT OF 11 AN 2 AN QUOSHUNT OF SUM OF 3 AN 5 AN 2
+  VISIBLE IT
 
-  BTW printing of variables and use of GIMMEH
-  I HAS A input
-  VISIBLE "gif imput "
-  GIMMEH input
-  VISIBLE input
-  VISIBLE "u gif meh " input "!"
+  BTW arithmetic with variables
+  I HAS A var1 ITZ 5
+  I HAS A var2 ITZ 3
+  
+  DIFF OF var2 AN var1
+  VISIBLE IT
+  MOD OF var2 AN var1
+  VISIBLE IT
+  BIGGR OF SUM OF var2 AN var1 AN PRODUKT OF var1 AN var2
+  VISIBLE IT
+  SUM OF var1 AN 12.0
+  VISIBLE IT
+  
+KTHXBYE
 
