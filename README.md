@@ -1,7 +1,14 @@
-<img src=https://upload.wikimedia.org/wikipedia/commons/0/02/LOLCode_logo.png>
+
+<h1 align = "center">
+    <img src = https://upload.wikimedia.org/wikipedia/commons/0/02/LOLCode_logo.png>
+    <br/>
+    LOLCODE Interpreter
+    <br/>
+    <img src = "https://img.shields.io/badge/status-finished-brightgreen.svg" >
+</h1>
 
 
-# LOLCODE Interpreter
+
 
 Welcome to our LOLCODE interpreter. This was developed by the following 3rd Year Students in fulfillment of their CMSC 124 requirements: Daniel Aguilar, Steven Crespo, and Ged Malabanan. 
 

@@ -76,8 +76,6 @@ def statement_grammar(line):
 
     global TOGGLE, SUBTOGGLE, CONTROL_FLAG
 
-    
-
     if is_bye(line):
         TOGGLE = END
         return True
@@ -269,7 +267,8 @@ def omg_grammar(line):
 
 def analyze(fn):
 
-    global TOGGLE, SUBTOGGLE
+    global TOGGLE, SUBTOGGLE, CONTROL_FLAG, CASE_FLAG
+    global MATCHED_FLAG, GTFO_FLAG
 
     # Reset lists and dictionary
     if len(tokens) != 0 or len(variables) != 0:
