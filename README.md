@@ -1,10 +1,7 @@
 
 <h1 align = "center">
     <img src = "images/dolomite.gif">
-    <br/>
-    Dolomite: LOLCODE Interpreter
-    <br/>
-    <img src = "https://img.shields.io/badge/status-finished-brightgreen.svg" > 
+    <img src = "https://img.shields.io/badge/status-finished-brightgreen.svg"> 
 </h1>
 
 

@@ -6,6 +6,7 @@ import os
 
 root = Tk()
 root.title('LOLcode Interpreter')
+root.iconbitmap(r'images/favicon.ico')
 root.geometry("1000x700")
 
 global filename
