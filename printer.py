@@ -1,9 +1,6 @@
-# Branch David
-# Printer
-# Nov 13 2020
-
 from checker import *
 from tkinter import messagebox
+
 
 def show_error(fn, num, line):
 

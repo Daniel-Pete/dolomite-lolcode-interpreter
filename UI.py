@@ -5,7 +5,7 @@ import analyzer
 import os
 
 root = Tk()
-root.title('LOLcode Interpreter')
+root.title('Dolomite')
 root.iconbitmap(r'images/favicon.ico')
 root.geometry("1000x700")
 
@@ -195,7 +195,7 @@ textScrollbar.config(command = textArea.yview)
 
 # add style for the treeview
 treeViewStyle = ttk.Style()
-treeViewStyle.theme_use("default")
+treeViewStyle.theme_use("clam")
 
 # configure our treeview colors
 treeViewStyle.configure("Treeview", 
