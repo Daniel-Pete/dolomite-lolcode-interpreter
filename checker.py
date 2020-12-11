@@ -881,12 +881,12 @@ def check_comparg(arg):
 
 
 def is_expression(line):
-
     # Check if literal/variable only
     aritharg = check_aritharg(line.strip(" "))
 
-    if aritharg:        
+    if aritharg:
         variables[IT] = str(aritharg)
+        append_lexemes(line)
         return True
 
     # arithmetic is final evaluated arithmetic expression
@@ -895,6 +895,7 @@ def is_expression(line):
     # Valid arithmetic expression
     if arithmethic != None:
         variables[IT] = str(arithmethic)
+        append_lexemes(line)
         return True
 
     # boolean is final evaluated boolean expression
@@ -907,6 +908,7 @@ def is_expression(line):
     # Valid boolean expression
     if boolean != None:
         variables[IT] = str(boolean)
+        append_lexemes(line)
         return True
 
     # compare is final evaluated compare expression
@@ -916,6 +918,7 @@ def is_expression(line):
     # Valid comparison expression
     if compare != None:
         variables[IT] = str(compare)
+        append_lexemes(line)
         return True
 
     # Invalid Expression
@@ -929,3 +932,95 @@ def process_bool(line):
     line = line.replace("FAIL", "False")
 
     return(line)
+
+def append_lexemes(exp):
+    if re.match("(\s*)(SUM OF)(.*)", exp):
+        groups = re.match("(\s*)(SUM OF)(.*)", exp).groups()
+        tokens.append([ADD_OP, groups[1]])
+        append_lexemes(groups[2][1:])
+        return
+    if re.match("(\s*)(DIFF OF)(.*)", exp): 
+        groups = re.match("(\s*)(DIFF OF)(.*)", exp).groups()
+        tokens.append([SUB_OP, groups[1]])
+        append_lexemes(groups[2][1:])
+        return
+    if re.match("(\s*)(PRODUKT OF)(.*)", exp): 
+        groups = re.match("(\s*)(PRODUKT OF)(.*)", exp).groups()
+        tokens.append([MUL_OP, groups[1]])
+        append_lexemes(groups[2][1:])
+        return
+    if re.match("(\s*)(QUOSHUNT OF)(.*)", exp): 
+        groups = re.match("(\s*)(QUOSHUNT OF)(.*)", exp).groups()
+        tokens.append([DIV_OP, groups[1]])
+        return(append_lexemes(groups[2][1:]))
+    if re.match("(\s*)(MOD OF)(.*)", exp): 
+        groups = re.match("(\s*)(MOD OF)(.*)", exp).groups()
+        tokens.append([MOD_OP, groups[1]])
+        return(append_lexemes(groups[2][1:]))
+    if re.match("(\s*)(BIGGR OF)(.*)", exp): 
+        groups = re.match("(\s*)(BIGGR OF)(.*)", exp).groups()
+        tokens.append([MAX_OP, groups[1]])
+        return(append_lexemes(groups[2][1:]))
+    if re.match("(\s*)(SMALLR OF)(.*)", exp): 
+        groups = re.match("(\s*)(SMALLR OF)(.*)", exp).groups()
+        tokens.append([MIN_OP, groups[1]])
+        return(append_lexemes(groups[2][1:]))
+    if re.match("(\s*)(BOTH OF)(.*)", exp): 
+        groups = re.match("(\s*)(BOTH OF)(.*)", exp).groups()
+        tokens.append([AND_OP, groups[1]])
+        return(append_lexemes(groups[2][1:]))
+    if re.match("(\s*)(EITHER OF)(.*)", exp): 
+        groups = re.match("(\s*)(EITHER OF)(.*)", exp).groups()
+        tokens.append([OR_OP, groups[1]])
+        return(append_lexemes(groups[2][1:]))
+    if re.match("(\s*)(WON OF)(.*)", exp): 
+        groups = re.match("(\s*)(WON OF)(.*)", exp).groups()
+        tokens.append([XOR_OP, groups[1]])
+        return(append_lexemes(groups[2][1:]))
+    if re.match("(\s*)(NOT)(.*)", exp): 
+        groups = re.match("(\s*)(NOT)(.*)", exp).groups()
+        tokens.append([NOT_OP, groups[1]])
+        return(append_lexemes(groups[2][1:]))
+    if re.match("(\s*)(ALL OF)(.*)", exp): 
+        groups = re.match("(\s*)(ALL OF)(.*)", exp).groups()
+        tokens.append([INF_AND_OP, groups[1]])
+        return(append_lexemes(groups[2][1:]))
+    if re.match("(\s*)(ANY OF)(.*)", exp): 
+        groups = re.match("(\s*)(ANY OF)(.*)", exp).groups()
+        tokens.append([INF_OR_OP, groups[1]])
+        return(append_lexemes(groups[2][1:]))
+    if re.match("(\s*)(BOTH SAEM)(.*)", exp): 
+        groups = re.match("(\s*)(BOTH SAEM)(.*)", exp).groups()
+        tokens.append([EQ_OP, groups[1]])
+        return(append_lexemes(groups[2][1:]))
+    if re.match("(\s*)(DIFFRINT)(.*)", exp): 
+        groups = re.match("(\s*)(DIFFRINT)(.*)", exp).groups()
+        tokens.append([NEQ_OP, groups[1]])
+        return(append_lexemes(groups[2][1:]))
+    if re.match("(\s*)(AN)(.*)", exp): 
+        groups = re.match("(\s*)(AN)(.*)", exp).groups()
+        tokens.append([CXT, groups[1]])
+        append_lexemes(groups[2][1:])
+        return
+    if re.match("(\s*)(\"[^\"]*\")(.*)", exp): 
+        groups = re.match("(\s*)(\"[^\"]*\")(.*)", exp).groups()
+        new = groups[1].strip('"')
+        tokens.append([STR_LIT, new])
+        return(append_lexemes(groups[2][1:]))
+    if re.match("(\s*)(-?[0-9]+)(.*)", exp): 
+        groups = re.match("(\s*)(-?[0-9]+)(.*)", exp).groups()
+        tokens.append([NBR_LIT, groups[1]])
+        return(append_lexemes(groups[2][1:]))
+    if re.match("(\s*)(-?[0-9]*\.[0-9]*)(.*)", exp): 
+        groups = re.match("(\s*)(-?[0-9]*\.[0-9]*)(.*)", exp).groups()
+        tokens.append([NBAR_LIT, groups[1]])
+        return(append_lexemes(groups[2][1:]))
+    if re.match("(\s*)([a-zA-Z]+[a-zA-Z0-9\_]*)(.*)", exp): 
+        groups = re.match("(\s*)([a-zA-Z]+[a-zA-Z0-9\_]*)(.*)", exp).groups()
+        tokens.append([VAR_IDENT, groups[1]])
+        return(append_lexemes(groups[2][1:]))
+    if re.match("(\s*)(WIN|FAIL)(.*)", exp): 
+        groups = re.match("(\s*)(WIN|FAIL)(.*)", exp).groups()
+        tokens.append([TROOF_LIT, groups[1]])
+        return(append_lexemes(groups[2][1:]))
+    return
